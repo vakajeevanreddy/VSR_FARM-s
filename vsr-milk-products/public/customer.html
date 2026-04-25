@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login - VSRFARM'S</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- EmailJS SDK (Optional for real emails) -->
+    <link rel="stylesheet" href="/CSS/style.css?v=1.3">
+    <style>
+        :root {
+            --primary: #27ae60;
+            --secondary: #2ecc71;
+            --text-dark: #2c3e50;
+            --text-light: #666;
+            --bg-light: #f4f7f6;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Login Section */
+        #loginSection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 42px;
+            color: #aaa;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        /* Dashboard Header */
+        .dash-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-area {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .logo-area span {
+            color: #FFD700;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        /* Use global .back-btn from style.css */
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Dashboard Layout */
+        .dash-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        /* Sidebar */
+        .dash-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+        }
+
+        .user-summary {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .profile-pic-container {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            flex-shrink: 0;
+        }
+
+        .profile-pic-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--white);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-pic-container img:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .upload-btn {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 26px;
+            height: 26px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border: 2px solid var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            z-index: 2;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .greeting {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .username {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .dash-nav {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 10px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            padding: 14px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-medium);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-radius: var(--radius-md);
+            margin-bottom: 5px;
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .nav-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .nav-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-item:hover i {
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .nav-item.active i {
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .dash-content {
+            flex-grow: 1;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            min-height: 600px;
+            width: 100%;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms */
+        .profile-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .input-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-wrap label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .input-wrap input,
+        .input-wrap select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .input-wrap input:disabled,
+        .input-wrap select:disabled {
+            background: #f1f1f1;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .input-wrap input:focus,
+        .input-wrap select:focus {
+            background: white;
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+        }
+
+        .edit-btn {
+            color: var(--primary);
+            background: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .save-btn:hover {
+            background: #0e8278;
+        }
+
+        /* Orders */
+        .order-item {
+            background: #fcfcfc;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 25px;
+            align-items: flex-start;
+            transition: box-shadow 0.3s;
+        }
+
+        .order-item:hover {
+            box-shadow: var(--shadow);
+            border-color: #e9e9e9;
+        }
+
+        .order-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        .order-details {
+            flex: 1;
+        }
+
+        .order-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .order-meta {
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .order-price {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 8px;
+        }
+
+        .order-status {
+            text-align: right;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-green {
+            background-color: #2ecc71;
+        }
+
+        .status-orange {
+            background-color: #f39c12;
+        }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            .dash-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .dash-sidebar {
+                width: 100%;
+            }
+
+            .profile-pic-container {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .order-item {
+                grid-template-columns: 60px 1fr;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-img {
+                grid-row: 1 / 3;
+            }
+
+            .order-status {
+                grid-column: 2 / 3;
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        /* Modals */
+        .otp-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .otp-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Payment Card Preview */
+        .credit-card {
+            width: 100%;
+            max-width: 360px;
+            aspect-ratio: 1.586;
+            height: auto;
+            background: linear-gradient(135deg, #2c3e50, #000);
+            background: linear-gradient(135deg, #2c3e50, #1a1a1a);
+            border-radius: 16px;
+            color: white;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .credit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-bg-visa {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+        }
+
+        .card-bg-mastercard {
+            background: linear-gradient(135deg, #c31432, #240b36);
+        }
+
+        .card-bg-rupay {
+            background: linear-gradient(135deg, #f46b45, #eea849);
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 38px;
+            background: linear-gradient(135deg, #d4af37 0%, #f2d06b 50%, #d4af37 100%);
+            border-radius: 6px;
+            margin-bottom: 0;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(90deg, transparent 0, transparent 10px, rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 11px),
+                repeating-linear-gradient(0deg, transparent 0, transparent 18px, rgba(0, 0, 0, 0.1) 18px, rgba(0, 0, 0, 0.1) 19px);
+            border-radius: 6px;
+            border: 1px solid rgba(184, 134, 11, 0.4);
+        }
+
+        .card-number-display {
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            letter-spacing: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+            z-index: 2;
+        }
+
+        .card-details-display {
+            display: flex;
+            justify-content: space-between;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            align-items: flex-end;
+        }
+
+        .detail-label {
+            font-size: 0.6rem;
+            opacity: 0.8;
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-logo {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2rem;
+            opacity: 0.9;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Utility */
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-msg {
+            color: #27ae60;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .toggle-link {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .toggle-link span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Address & Payment Forms */
+        .edit-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+            margin-bottom: 20px;
+        }
+
+        .payment-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .card-form-section,
+        .card-preview-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .card-form-section .input-wrap {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .card-form-section input {
+            height: 48px;
+            padding: 12px 15px;
+            width: 100%;
+        }
+
+        .otp-input {
+            letter-spacing: 5px;
+            font-size: 1.5rem;
+            text-align: center;
+            width: 100%;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .success-section {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        /* Tab Animation */
+        .tab-pane {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        /* --- Multiple Address Styles --- */
+        .address-card-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+
+        .address-card-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .address-type-badge {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .address-actions {
+            border-top: 1px solid #f0f0f0;
+            margin-top: 15px;
+            padding-top: 15px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+        }
+
+        .action-btn.delete {
+            color: #e74c3c;
+        }
+
+        .add-new-address-btn {
+            width: 100%;
+            padding: 15px;
+            background: white;
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+            text-align: left;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.1s;
+        }
+
+        .add-new-address-btn:hover {
+            background: #f9fcfb;
+        }
+
+        /* --- Review System Styles --- */
+        .review-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #eee;
+            animation: fadeIn 0.5s;
+            width: 100%;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            color: #e0e0e0;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .star.filled {
+            color: #ff9f00;
+            /* Flipkart Gold */
+        }
+
+        /* Animations */
+        @keyframes starBounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.4) rotate(15deg);
+            }
+        }
+
+        @keyframes starGlow {
+            0% {
+                filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+            }
+
+            100% {
+                filter: drop-shadow(0 0 0 rgba(255, 215, 0, 0));
+            }
+        }
+
+        .star.animate-bounce {
+            animation: starBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .star.animate-glow {
+            animation: starGlow 1.5s infinite;
+        }
+
+        .review-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .review-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .submit-review-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-review-btn:hover {
+            background: #0e8278;
+        }
+
+        .review-read-only .star {
+            cursor: default;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html" class="logo-text">
+                    <img src="/images/logo.png?v=1.3" alt="VSR Logo"> VSRFARM'S
+                </a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="products.html"><i class="fas fa-store"></i> Products</a></li>
+                <li><a href="payment.html"><i class="fas fa-credit-card"></i> Payment</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="cart-icon" onclick="window.location.href='payment.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </div>
+                <!-- Profile Flip Icon -->
+                <div class="profile-flip-container" id="profileFlip">
+                    <div class="profile-flipper">
+                        <div class="profile-front">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="profile-back">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <button id="headerLogout" class="header-logout-btn" onclick="handleGlobalLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- AUTH GUARD -->
+    <script>
+        (function() {
+            const user = JSON.parse(localStorage.getItem('vsr_user'));
+            const isOwner = localStorage.getItem('vsr_owner_active') === 'true';
+            if (!user && !isOwner) {
+                window.location.href = 'login.html';
+            }
+        })();
+    </script>
+
+    <!-- DASHBOARD SECTION -->
+    <div id="dashboardSection" style="display: none;">
+
+        <div class="dash-container">
+            <!-- Left Sidebar -->
+            <div class="dash-sidebar">
+                <div class="user-summary">
+                    <div class="profile-pic-container">
+                        <img id="sidebarProfileImg"
+                            src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/profile-pic-male_4811a1.svg"
+                            alt="Profile" onclick="viewProfilePic()" title="View Profile">
+                        <div class="upload-btn" onclick="document.getElementById('profileUpload').click()"
+                            title="Upload New Photo">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="user-info">
+                        <div class="greeting">Hello,</div>
+                        <div class="username" id="sidebarName">User Name</div>
+                    </div>
+                </div>
+                <input type="file" id="profileUpload" hidden accept="image/*" onchange="uploadProfilePic(this)">
+
+                <div class="dash-nav" style="margin-top: 20px;">
+                    <div class="nav-item active" onclick="switchTab('profile', this)">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </div>
+                    <div class="nav-item" onclick="switchTab('orders', this)">
+                        <i class="fas fa-box"></i> My Orders
+                    </div>
+                    <div class="nav-item" onclick="switchTab('wishlist', this)">
+                        <i class="fas fa-heart"></i> Wishlist
+                    </div>
+                    <div class="nav-item" onclick="switchTab('invoices', this)">
+                        <i class="fas fa-file-invoice"></i> Invoices
+                    </div>
+                    <div class="nav-item" onclick="switchTab('address', this)">
+                        <i class="fas fa-location-dot"></i> Address Book
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="dash-content">
+
+                <!-- Profile Tab -->
+                <div id="tab-profile" class="tab-pane active">
+                    <div class="section-title">
+                        <span>Personal Information</span>
+                        <div>
+                            <button class="edit-btn" id="editProfileBtn" onclick="toggleEditProfile()"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="save-btn" id="saveProfileBtn" style="display: none;" onclick="saveProfile()">Save Changes</button>
+                        </div>
+                    </div>
+                    <form class="profile-form" id="profileForm">
+                        <div class="input-wrap">
+                            <label>Full Name</label>
+                            <input type="text" id="prof-name" disabled placeholder="Enter your name">
+                        </div>
+                        <div class="input-wrap">
+                            <label>Email Address</label>
+                            <input type="email" id="prof-email" disabled readonly>
+                        </div>
+                        <div class="input-wrap">
+                            <label>Mobile Number</label>
+                            <input type="text" id="prof-phone" disabled placeholder="Enter your mobile number">
+                        </div>
+                        <div class="input-wrap" style="position: relative;">
+                            <label>Gender</label>
+                            <select id="p-gender" disabled style="padding-left: 40px;" onchange="updateGenderIcon()">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <i id="genderIcon" class="fas fa-mars"
+                                style="position: absolute; left: 15px; top: 42px; color: #aaa;"></i>
+                        </div>
+                        <button type="button" id="saveBtn" class="save-btn" style="display:none;"
+                            onclick="saveProfile()">Save
+                            Changes</button>
+                    </form>
+                </div>
+
+                <!-- Orders Tab -->
+                <div id="tab-orders" class="tab-pane" style="display:none;">
+                    <div class="section-title">
+                        <span>My Orders</span>
+                        <button class="edit-btn" style="color: #e74c3c; font-size: 0.9rem;"
+                            onclick="clearOrders()">Empty
+                            Cart</button>
+                    </div>
+                    <div id="ordersList">
+                        <!-- Orders will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Wishlist Tab -->
+                <div id="tab-wishlist" class="tab-pane" style="display:none;">
+                    <div class="section-title">
+                        <span>My Wishlist</span>
+                        <a href="wishlist.html" class="edit-btn" style="text-decoration:none;">View Full Page →</a>
+                    </div>
+                    <div id="dashWishlist">
+                        <!-- Wishlist items rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Invoices Tab -->
+                <div id="tab-invoices" class="tab-pane" style="display:none;">
+                    <div class="section-title">
+                        <span>My Invoices</span>
+                    </div>
+                    <div id="invoicesList">
+                        <!-- Invoices rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Address Tab -->
+                <div id="tab-address" class="tab-pane" style="display:none;">
+                    <div class="section-title">Manage Addresses</div>
+
+                    <div id="addressDisplay" class="address-card">
+                        <!-- Address Content Loaded via JS -->
+                    </div>
+
+                    <div id="addressEditForm" class="edit-form">
+                        <div class="form-row">
+                            <div class="input-wrap" style="position: relative;">
+                                <label>House No / Building</label>
+                                <input type="text" id="addr-house" style="padding-left: 40px;">
+                                <i class="fas fa-home"
+                                    style="position: absolute; left: 15px; top: 42px; color: #aaa;"></i>
+                            </div>
+                            <div class="input-wrap" style="position: relative;">
+                                <label>Street / Area</label>
+                                <input type="text" id="addr-street" style="padding-left: 40px;">
+                                <i class="fas fa-road"
+                                    style="position: absolute; left: 15px; top: 42px; color: #aaa;"></i>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-wrap" style="position: relative;">
+                                <label>City</label>
+                                <input type="text" id="addr-city" style="padding-left: 40px;">
+                                <i class="fas fa-city"
+                                    style="position: absolute; left: 15px; top: 42px; color: #aaa;"></i>
+                            </div>
+                            <div class="input-wrap" style="position: relative;">
+                                <label>State</label>
+                                <input type="text" id="addr-state" style="padding-left: 40px;">
+                                <i class="fas fa-map"
+                                    style="position: absolute; left: 15px; top: 42px; color: #aaa;"></i>
+                            </div>
+                            <div class="input-wrap" style="position: relative;">
+                                <label>Pincode</label>
+                                <input type="text" id="addr-pincode" style="padding-left: 40px;">
+                                <i class="fas fa-map-pin"
+                                    style="position: absolute; left: 15px; top: 42px; color: #aaa;"></i>
+                            </div>
+                        </div>
+                        <button class="save-btn" style="width: auto; margin-right: 10px;" onclick="saveAddress()">Save
+                            Address</button>
+                        <button class="edit-btn" onclick="toggleAddressForm(false)">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Payments Tab -->
+                <div id="tab-payments" class="tab-pane" style="display:none;">
+                    <div class="section-title">
+                        <span>Payment Method</span>
+                    </div>
+
+                    <!-- Success Message Section -->
+                    <div id="paymentSuccess" class="success-section">
+                        <h2 style="color: #27ae60; margin-bottom: 10px;">Thanks for Shopping</h2>
+                        <p style="color: #555; font-size: 1.1rem; margin-bottom: 30px;">Yours faithfully</p>
+                        <img src="images/logo.png" alt="VSRFARM'S" style="width: 120px; height: auto;">
+                        <br><br>
+                        <button class="back-btn" style="background: #27ae60; margin: 0 auto;"
+                            onclick="window.location.href='index.html'">Continue Shopping</button>
+                    </div>
+
+                    <!-- Payment Form & Preview -->
+                    <div id="paymentFormSection" class="payment-container">
+                        <div class="card-form-section">
+                            <div class="edit-form" style="display: block; margin-top: 0;">
+                                <div class="input-wrap" style="margin-bottom: 15px;">
+                                    <label>Card Number</label>
+                                    <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19"
+                                        oninput="updateCardPreview()">
+                                </div>
+                                <div class="input-wrap" style="margin-bottom: 15px;">
+                                    <label>Card Holder Name</label>
+                                    <input type="text" id="card-name" placeholder="Name on Card"
+                                        oninput="updateCardPreview()">
+                                </div>
+                                <div class="form-row">
+                                    <div class="input-wrap">
+                                        <label>Expiry Date (MM/YY)</label>
+                                        <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5"
+                                            oninput="updateCardPreview()">
+                                    </div>
+                                    <div class="input-wrap">
+                                        <label>CVV / PIN</label>
+                                        <input type="password" id="card-cvv" placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+                                <button class="save-btn"
+                                    style="width: 100%; background: linear-gradient(to right, #11998e, #38ef7d);"
+                                    onclick="initiatePayment()">Pay Now</button>
+                            </div>
+                        </div>
+
+                        <div class="card-preview-section">
+                            <div class="credit-card" id="previewCard">
+                                <div class="card-chip"></div>
+                                <div class="card-logo" id="previewLogo"><i class="fas fa-credit-card"></i></div>
+                                <div class="card-number-display" id="previewNumber">#### #### #### ####</div>
+                                <div class="card-details-display">
+                                    <div class="card-holder-display">
+                                        <span class="detail-label">Card Holder</span>
+                                        <span class="detail-value" id="previewName">FULL NAME</span>
+                                    </div>
+                                    <div class="card-expiry-display">
+                                        <span class="detail-label">Expires</span>
+                                        <span class="detail-value" id="previewExpiry">MM/YY</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Profile View Modal -->
+        <div id="profileViewModal" class="otp-modal" onclick="closeProfileView()">
+            <div class="otp-content" style="background: transparent; box-shadow: none; width: auto; max-width: 90%;"
+                onclick="event.stopPropagation()">
+                <img id="fullProfileImg" src="" alt="Profile Picture"
+                    style="width: 100%; max-width: 400px; border-radius: 10px; border: 4px solid white;">
+            </div>
+        </div>
+
+        <!-- OTP Modal -->
+        <div id="otpModal" class="otp-modal">
+            <div class="otp-content">
+                <h3>Verify Payment</h3>
+                <p>Enter the OTP sent to your email</p>
+                <input type="text" id="otpInput" class="otp-input" placeholder="XXXX" maxlength="6">
+                <button class="save-btn" onclick="verifyOTP()">Verify & Submit</button>
+                <button class="edit-btn" style="margin-top: 10px; color: #e74c3c;" onclick="closeOTP()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Notification Overlay -->
+        <div id="notificationOverlay" class="otp-modal">
+            <div class="otp-content">
+                <h3 id="notifTitle" style="color: #27ae60; margin-bottom: 10px;"></h3>
+                <p id="notifMessage" style="color: #555; font-size: 1.1rem;"></p>
+            </div>
+        </div>
+
+        <script>
+            let isLogin = true;
+            let generatedOTP = null;
+
+            const API_BASE_URL = 'https://tidy-seals-flow.loca.lt';
+            // Regex: 8+ chars, 1 upper, 1 lower, 1 number, 1 special
+            const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const token = urlParams.get('token');
+            const emailParam = urlParams.get('email');
+
+            // --- Check Login Status on Load ---
+            document.addEventListener('DOMContentLoaded', () => {
+                if (action === 'verify') {
+                    verifyUserAccount(emailParam, token);
+                    return;
+                } else if (action === 'reset') {
+                    showResetPasswordView(emailParam, token);
+                    return;
+                }
+
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+
+                if (user) {
+                    showDashboard(user);
+                } else {
+                    showLogin();
+                }
+            });
+
+            function showDashboard(user) {
+                const loginSec = document.getElementById('loginSection');
+                if (loginSec) loginSec.style.display = 'none';
+                
+                const dashSec = document.getElementById('dashboardSection');
+                if (dashSec) dashSec.style.display = 'block';
+
+                loadProfile();
+                loadOrders();
+                loadAddresses();
+                loadDashWishlist();
+                loadInvoicesList();
+            }
+
+            function showLogin() {
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('dashboardSection').style.display = 'none';
+            }
+
+            function logout() {
+                localStorage.removeItem('vsr_user');
+                localStorage.removeItem('vsr_token');
+                window.location.reload();
+            }
+
+            // --- Dashboard Tabs Logic ---
+            function switchTab(tabName, element) {
+                // Hide all tabs
+                ['profile', 'orders', 'address', 'payments', 'wishlist', 'invoices'].forEach(t => {
+                    const el = document.getElementById('tab-' + t);
+                    if (el) el.style.display = 'none';
+                });
+
+                // Show selected tab
+                const tab = document.getElementById('tab-' + tabName);
+                if (tab) tab.style.display = 'block';
+
+                // Refresh tab data
+                if (tabName === 'wishlist') loadDashWishlist();
+                if (tabName === 'invoices') loadInvoicesList();
+                if (tabName === 'orders') loadOrders();
+
+                // Update Sidebar Active State
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => item.classList.remove('active'));
+                if (element) element.classList.add('active');
+            }
+
+            // --- Gender Icon Logic ---
+            function updateGenderIcon() {
+                const gender = document.getElementById('p-gender').value;
+                const icon = document.getElementById('genderIcon');
+                if (gender === 'Male') {
+                    icon.className = 'fas fa-mars';
+                } else if (gender === 'Female') {
+                    icon.className = 'fas fa-venus';
+                } else {
+                    icon.className = 'fas fa-venus-mars';
+                }
+            }
+
+            // --- Profile Edit Logic ---
+            function toggleEditProfile() {
+                const isEditing = document.getElementById('prof-name').disabled;
+                
+                document.getElementById('prof-name').disabled = !isEditing;
+                document.getElementById('prof-phone').disabled = !isEditing;
+                document.getElementById('p-gender').disabled = !isEditing;
+                
+                document.getElementById('editProfileBtn').style.display = isEditing ? 'none' : 'block';
+                document.getElementById('saveProfileBtn').style.display = isEditing ? 'block' : 'none';
+            }
+
+            async function saveProfile() {
+                const newName = document.getElementById('prof-name').value;
+                const newPhone = document.getElementById('prof-phone').value;
+                const newGender = document.getElementById('p-gender').value;
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                
+                if (!user || (!user.id && !user.uid)) {
+                    alert('Session expired. Please login again.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const userId = user.id || user.uid;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: newName,
+                            phone_number: newPhone,
+                            gender: newGender,
+                            profile_image: user.profilePic // Sync image to backend
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) throw new Error(data.error || 'Failed to update profile');
+
+                    // Update LocalStorage
+                    user.name = newName;
+                    user.displayName = newName;
+                    user.phoneNumber = newPhone;
+                    user.phone = newPhone;
+                    user.gender = newGender;
+                    localStorage.setItem('vsr_user', JSON.stringify(user));
+
+                    // Update UI
+                    if (document.getElementById('sidebarName')) document.getElementById('sidebarName').innerText = newName;
+                    if (window.updateProfileState) window.updateProfileState(); // Update global navbar
+
+                    // Disable inputs
+                    document.getElementById('prof-name').disabled = true;
+                    document.getElementById('prof-phone').disabled = true;
+                    document.getElementById('p-gender').disabled = true;
+                    document.getElementById('editProfileBtn').style.display = 'block';
+                    document.getElementById('saveProfileBtn').style.display = 'none';
+
+                    alert('Profile Updated Successfully!');
+                } catch (error) {
+                    console.error('Save Profile Error:', error);
+                    alert(error.message);
+                }
+            }
+
+            // --- Profile Picture Logic ---
+            function uploadProfilePic(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const newSrc = e.target.result;
+                        document.getElementById('sidebarProfileImg').src = newSrc;
+
+                        // Save to LocalStorage
+                        const user = JSON.parse(localStorage.getItem('vsr_user'));
+                        if (!user) return; // Guard against null user
+                        try {
+                            user.profilePic = newSrc;
+                            localStorage.setItem('vsr_user', JSON.stringify(user));
+                        } catch (e) {
+                            console.error("Storage Error:", e);
+                            alert("Image is too large to save. Please choose a smaller image.");
+                        }
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function viewProfilePic() {
+                const currentSrc = document.getElementById('sidebarProfileImg').src;
+                document.getElementById('fullProfileImg').src = currentSrc;
+                document.getElementById('profileViewModal').style.display = 'flex';
+            }
+
+            function closeProfileView() {
+                document.getElementById('profileViewModal').style.display = 'none';
+            }
+
+            // --- Address Logic ---
+            let editingAddressId = null;
+            async function loadProfile() {
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                if (!user) return;
+
+                const userId = user.id || user.uid;
+
+                try {
+                    // Fetch latest from backend
+                    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+                    if (response.ok) {
+                        const dbUser = await response.json();
+                        // Sync LocalStorage with backend
+                        user.name = dbUser.name;
+                        user.displayName = dbUser.name;
+                        user.phoneNumber = dbUser.phone_number;
+                        user.phone = dbUser.phone_number;
+                        user.gender = dbUser.gender;
+                        user.profilePic = dbUser.profile_image || user.profilePic;
+                        localStorage.setItem('vsr_user', JSON.stringify(user));
+                    }
+                } catch (error) {
+                    console.warn('Could not sync with backend, using local data:', error);
+                }
+
+                const name = user.displayName || user.name || 'User';
+                if (document.getElementById('prof-name')) document.getElementById('prof-name').value = name;
+                if (document.getElementById('prof-email')) document.getElementById('prof-email').value = user.email || '';
+                if (document.getElementById('prof-phone')) document.getElementById('prof-phone').value = user.phoneNumber || user.phone || '';
+                if (document.getElementById('p-gender')) document.getElementById('p-gender').value = user.gender || 'Male';
+                
+                // Update Sidebar
+                if (document.getElementById('sidebarName')) document.getElementById('sidebarName').innerText = name;
+                
+                if ((user.profilePic || user.photoURL) && document.getElementById('sidebarProfileImg')) {
+                    document.getElementById('sidebarProfileImg').src = user.profilePic || user.photoURL;
+                }
+                if (document.getElementById('genderIcon')) updateGenderIcon();
+            }
+            async function loadAddresses() {
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                if (!user || (!user.id && !user.uid)) return;
+
+                const userId = user.id || user.uid;
+                const container = document.getElementById('addressDisplay');
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/users/${userId}/addresses`);
+                    if (!response.ok) throw new Error("Failed to load addresses");
+                    const addresses = await response.json();
+                    
+                    // Update cache
+                    user.addresses = addresses;
+                    localStorage.setItem('vsr_user', JSON.stringify(user));
+
+                    let html = `
+                        <button class="add-new-address-btn" onclick="initAddAddress()">
+                            <i class="fas fa-plus"></i> Add A New Address
+                        </button>
+                    `;
+
+                    if (addresses.length === 0) {
+                        html += `<p style="text-align:center; color:#777; padding: 20px;">No addresses saved yet.</p>`;
+                    } else {
+                        addresses.forEach(addr => {
+                            const isDefault = addr.is_default ? '<span class="address-type-badge" style="background:#f0f0f0; color:#555;">DEFAULT</span>' : '';
+                            const typeBadge = addr.type ? `<span class="address-type-badge">${addr.type}</span>` : '<span class="address-type-badge">HOME</span>';
+
+                            html += `
+                            <div class="address-card-item" style="${addr.is_default ? 'border-color:var(--primary); background:#fcfcfc;' : ''}">
+                                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+                                    <div>
+                                        ${typeBadge}
+                                        ${isDefault}
+                                    </div>
+                                    ${!addr.is_default ? `<button class="action-btn" onclick="setDefaultAddress(${addr.id})">Set as Default</button>` : ''}
+                                </div>
+                                
+                                <p style="font-weight: 600; margin: 0 0 5px; font-size:1rem;">${user.name}</p>
+                                <p style="margin: 0; color: #333; font-size: 0.9rem; line-height:1.5;">
+                                    ${addr.house}, ${addr.street}<br>
+                                    ${addr.city}, ${addr.state} - <strong>${addr.pincode}</strong>
+                                </p>
+                                <p style="margin: 10px 0 0; font-weight: 500; font-size:0.9rem;">
+                                    <i class="fas fa-phone-alt" style="font-size:0.8rem; color:#777; margin-right:5px;"></i> 
+                                    ${user.phone || '+91 81437 13538'}
+                                </p>
+
+                                <div class="address-actions">
+                                    <button class="action-btn" onclick="editAddress(${addr.id})">EDIT</button>
+                                    <button class="action-btn delete" onclick="deleteAddress(${addr.id})">DELETE</button>
+                                </div>
+                            </div>
+                            `;
+                        });
+                    }
+
+                    container.innerHTML = html;
+                } catch (err) {
+                    console.error("Load Addresses Error:", err);
+                    container.innerHTML = `<p style="color:red; text-align:center; padding:20px;">Error loading addresses. Please try again.</p>`;
+                }
+
+                document.getElementById('addressEditForm').style.display = 'none';
+                container.style.display = 'block';
+            }
+
+            function initAddAddress() {
+                editingAddressId = null;
+                document.getElementById('addr-house').value = '';
+                document.getElementById('addr-street').value = '';
+                document.getElementById('addr-city').value = '';
+                document.getElementById('addr-state').value = '';
+                document.getElementById('addr-pincode').value = '';
+                toggleAddressForm(true);
+            }
+
+            function editAddress(id) {
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                const addr = user.addresses.find(a => a.id === id);
+                if (!addr) return;
+
+                editingAddressId = id;
+                document.getElementById('addr-house').value = addr.house;
+                document.getElementById('addr-street').value = addr.street;
+                document.getElementById('addr-city').value = addr.city;
+                document.getElementById('addr-state').value = addr.state;
+                document.getElementById('addr-pincode').value = addr.pincode;
+
+                toggleAddressForm(true);
+            }
+
+            function toggleAddressForm(show) {
+                document.getElementById('addressEditForm').style.display = show ? 'block' : 'none';
+                document.getElementById('addressDisplay').style.display = show ? 'none' : 'block';
+            }
+
+            async function saveAddress() {
+                const house = document.getElementById('addr-house').value.trim();
+                const street = document.getElementById('addr-street').value.trim();
+                const city = document.getElementById('addr-city').value.trim();
+                const state = document.getElementById('addr-state').value.trim();
+                const pincode = document.getElementById('addr-pincode').value.trim();
+
+                if (!house || !street || !city || !state || !pincode) {
+                    alert("Please fill in all address fields.");
+                    return;
+                }
+
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                const userId = user.id || user.uid;
+
+                const addressData = { house, street, city, state, pincode, type: 'Home' };
+
+                try {
+                    let url = `${API_BASE_URL}/users/${userId}/addresses`;
+                    let method = 'POST';
+
+                    if (editingAddressId) {
+                        url += `/${editingAddressId}`;
+                        method = 'PUT';
+                    } else {
+                        // If it's the first address, make it default
+                        addressData.is_default = (!user.addresses || user.addresses.length === 0);
+                    }
+
+                    const res = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(addressData)
+                    });
+
+                    if (res.ok) {
+                        loadAddresses();
+                        toggleAddressForm(false);
+                        showToast(editingAddressId ? 'Address updated!' : 'Address added!', 'success');
+                    } else {
+                        throw new Error("Failed to save address");
+                    }
+                } catch (err) {
+                    alert(err.message);
+                }
+            }
+
+            async function deleteAddress(id) {
+                if (!confirm("Are you sure you want to delete this address?")) return;
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                const userId = user.id || user.uid;
+
+                try {
+                    const res = await fetch(`${API_BASE_URL}/users/${userId}/addresses/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (res.ok) {
+                        loadAddresses();
+                        showToast('Address deleted!', 'success');
+                    }
+                } catch (err) {
+                    console.error("Delete error:", err);
+                }
+            }
+
+            async function setDefaultAddress(id) {
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                const userId = user.id || user.uid;
+                const addr = user.addresses.find(a => a.id === id);
+                if (!addr) return;
+
+                try {
+                    const res = await fetch(`${API_BASE_URL}/users/${userId}/addresses/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ...addr, is_default: true })
+                    });
+                    if (res.ok) {
+                        loadAddresses();
+                        showToast('Default address set!', 'success');
+                    }
+                } catch (err) {
+                    console.error("Set default error:", err);
+                }
+            }
+
+
+            // --- Advanced Payment Logic ---
+
+            function updateCardPreview() {
+                const num = document.getElementById('card-number').value;
+                const name = document.getElementById('card-name').value;
+                const expiry = document.getElementById('card-expiry').value;
+
+                // Format Number with spaces
+                const formattedNum = num.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+                document.getElementById('card-number').value = formattedNum; // Update input
+                document.getElementById('previewNumber').innerText = formattedNum || '#### #### #### ####';
+
+                document.getElementById('previewName').innerText = name.toUpperCase() || 'FULL NAME';
+                document.getElementById('previewExpiry').innerText = expiry || 'MM/YY';
+
+                // Detect Card Type
+                const card = document.getElementById('previewCard');
+                const logo = document.getElementById('previewLogo');
+                const cleanNum = num.replace(/\s/g, '');
+
+                // Reset classes
+                card.className = 'credit-card';
+                logo.innerHTML = '<i class="fas fa-credit-card"></i>';
+
+                if (/^4/.test(cleanNum)) {
+                    card.classList.add('card-bg-visa');
+                    logo.innerHTML = '<i class="fab fa-cc-visa"></i> Visa';
+                } else if (/^5[1-5]/.test(cleanNum)) {
+                    card.classList.add('card-bg-mastercard');
+                    logo.innerHTML = '<i class="fab fa-cc-mastercard"></i> MasterCard';
+                } else if (/^6/.test(cleanNum)) {
+                    card.classList.add('card-bg-rupay');
+                    logo.innerText = 'RuPay';
+                }
+            }
+
+            function initiatePayment() {
+                const num = document.getElementById('card-number').value.replace(/\s/g, '');
+                const name = document.getElementById('card-name').value;
+                const expiry = document.getElementById('card-expiry').value;
+                const cvv = document.getElementById('card-cvv').value;
+
+                // Basic Validation
+                if (num.length < 13 || num.length > 19) return alert('Invalid Card Number');
+                if (name.length < 3) return alert('Invalid Name');
+                if (!/^\d{2}\/\d{2}$/.test(expiry)) return alert('Invalid Expiry (MM/YY)');
+                if (cvv.length < 3) return alert('Invalid CVV');
+
+                // Generate OTP
+                generatedOTP = Math.floor(100000 + Math.random() * 900000);
+
+                // Simulate Sending Email
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                const email = user ? user.email : 'customer@example.com';
+
+                // console.log(`Sending OTP ${generatedOTP} to ${email}`);
+                // NOTE: This uses a hardcoded alert for the OTP.
+                // For a real application, you would use a backend service to send an SMS or email.
+                // Since this page doesn't use EmailJS for this part, we will just alert it for development.
+
+                alert(`An OTP has been sent to your registered contact method.\n(Dev OTP: ${generatedOTP})`);
+                document.getElementById('otpModal').style.display = 'flex';
+
+            }
+
+            function verifyOTP() {
+                const input = document.getElementById('otpInput').value;
+                if (input == generatedOTP) {
+                    closeOTP();
+                    showPaymentSuccess();
+                } else {
+                    alert('Incorrect OTP. Please try again.');
+                }
+            }
+
+            function closeOTP() {
+                document.getElementById('otpModal').style.display = 'none';
+                document.getElementById('otpInput').value = '';
+            }
+
+            function showPaymentSuccess() {
+                document.getElementById('paymentFormSection').style.display = 'none';
+                document.getElementById('paymentSuccess').style.display = 'block';
+
+                // Optional: Clear orders from local storage if paying for cart
+                // localStorage.removeItem('vsr_orders'); 
+            }
+
+            // --- Load Orders Logic ---
+            async function loadOrders() {
+                const ordersList = document.getElementById('ordersList');
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                
+                if (!user || (!user.id && !user.uid)) {
+                    ordersList.innerHTML = '<p style="text-align:center; padding:20px; color:#878787;">Please login to view your orders.</p>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/orders/user/${user.id || user.uid}`);
+                    if (!response.ok) throw new Error('Failed to fetch orders');
+                    const orders = await response.json();
+
+                    if (orders.length === 0) {
+                        ordersList.innerHTML = '<p style="text-align:center; padding:20px; color:#878787;">No orders found. Start shopping!</p>';
+                    } else {
+                        renderOrdersList(orders, ordersList);
+                    }
+                } catch (error) {
+                    console.error('Orders error:', error);
+                    ordersList.innerHTML = '<p style="text-align:center; padding:20px; color:red;">Error loading orders.</p>';
+                }
+            }
+
+            function clearOrders() {
+                if (confirm("Are you sure you want to empty your cart/orders?")) {
+                    localStorage.removeItem('vsr_orders');
+                    loadOrders();
+                }
+            }
+
+            function renderOrdersList(orders, container) {
+                container.innerHTML = orders.map(order => {
+                    const date = new Date(order.order_date).toLocaleDateString();
+                    const status = order.status || 'Pending';
+                    const statusColor = status === 'Delivered' ? 'status-green' : (status === 'Cancelled' ? 'status-red' : 'status-orange');
+                    
+                    return `
+                    <div class="order-item">
+                        <div class="order-img-wrap" id="order-img-${order.id}">
+                            <i class="fas fa-box" style="font-size: 2.5rem; color: #eee;"></i>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-title">Order #${order.id}</div>
+                            <div class="order-meta">Ordered on: ${date}</div>
+                            <div id="order-items-list-${order.id}" style="font-size: 0.85rem; color: #555; margin: 5px 0;">
+                                Loading items...
+                            </div>
+                            <div class="order-price">₹${order.total_amount}</div>
+                            <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                                <button onclick="generateInvoice('${order.id}')" style="padding:6px 14px; background:#27ae60; color:white; border:none; border-radius:4px; font-size:0.8rem; font-weight:600; cursor:pointer;">
+                                    <i class="fas fa-download"></i> Invoice
+                                </button>
+                                ${status !== 'Delivered' && status !== 'Cancelled' && status !== 'Out for Delivery' ? `
+                                <button onclick="cancelOrder('${order.id}'); loadOrders();" style="padding:6px 14px; background:#e74c3c; color:white; border:none; border-radius:4px; font-size:0.8rem; font-weight:600; cursor:pointer;">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>` : ''}
+                                ${status === 'Cancelled' ? '<span style="color:#e74c3c; font-size:0.82rem; font-weight:500;">Cancelled</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="order-status">
+                            <div style="font-weight: 500; color: #212121;">
+                                <span class="status-dot ${statusColor}"></span> ${status}
+                            </div>
+                            <div style="font-size: 0.8rem; margin-top: 5px; color: #777;">Payment: ${order.payment_status || 'Pending'}</div>
+                            ${status === 'Delivered' ? `
+                                <div class="review-section" id="review-area-${order.id}">
+                                    <div style="font-weight:600; font-size:0.85rem; margin-bottom:8px; color:#333;">Rate your order</div>
+                                    <div class="star-rating" id="stars-${order.id}" onmouseleave="resetStars('${order.id}')">
+                                        ${[1,2,3,4,5].map(i => `<i class="fas fa-star star" onclick="selectRating('${order.id}', ${i})" onmouseover="highlightStars('${order.id}', ${i})"></i>`).join('')}
+                                    </div>
+                                    <input type="hidden" id="rating-val-${order.id}" value="0">
+                                    <textarea id="review-text-${order.id}" class="review-textarea" placeholder="Share your feedback..." rows="2"></textarea>
+                                    <button class="submit-review-btn" onclick="submitReview('${order.id}')">Submit Review</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                // Proactively load details for the items
+                orders.forEach(order => loadOrderDetails(order.id));
+            }
+
+            async function loadOrderDetails(orderId) {
+                try {
+                    const res = await fetch(`${API_BASE_URL}/orders/details/${orderId}`);
+                    const items = await res.json();
+                    if (items.length > 0) {
+                        const imgWrap = document.getElementById(`order-img-${orderId}`);
+                        if (imgWrap) {
+                            imgWrap.innerHTML = `<img src="${items[0].image_url || 'images/milk_product.png'}" alt="Order Item" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">`;
+                        }
+
+                        const itemsList = document.getElementById(`order-items-list-${orderId}`);
+                        if (itemsList) {
+                            itemsList.innerHTML = items.map(item => `${item.name} x ${item.quantity}`).join(', ');
+                        }
+                    } else {
+                        const itemsList = document.getElementById(`order-items-list-${orderId}`);
+                        if (itemsList) itemsList.innerHTML = 'No items found';
+                    }
+                } catch(e) {
+                    console.error("Error loading order details:", e);
+                }
+            }
+
+            function selectRating(orderId, rating) {
+                document.getElementById(`rating-val-${orderId}`).value = rating;
+                highlightStars(orderId, rating);
+            }
+
+            async function submitReview(orderId) {
+                const rating = document.getElementById(`rating-val-${orderId}`).value;
+                const text = document.getElementById(`review-text-${orderId}`).value;
+
+                if (rating == 0) {
+                    alert("Please select a rating.");
+                    return;
+                }
+
+                try {
+                    const detailRes = await fetch(`${API_BASE_URL}/orders/details/${orderId}`);
+                    const items = await detailRes.json();
+                    
+                    const user = JSON.parse(localStorage.getItem('vsr_user'));
+
+                    if (window.saveReview && items.length > 0) {
+                        let allSuccess = true;
+                        // For simplicity, we apply the same review to all products in the order if multiple
+                        // but usually e-commerce allows per-item reviews. 
+                        // Here we'll just review the first item or ideally all.
+                        for (const item of items) {
+                            const success = await window.saveReview(item.name, rating, text, user.name);
+                            if (!success) allSuccess = false;
+                        }
+
+                        if (allSuccess) {
+                            document.getElementById(`review-area-${orderId}`).innerHTML = '<div style="color:#27ae60; font-weight:600; padding:10px;"><i class="fas fa-check-circle"></i> Review Submitted!</div>';
+                            showToast("Thank you for your review!", "success");
+                        } else {
+                            showToast("Some reviews failed to submit.", "warning");
+                        }
+                    }
+                } catch (e) {
+                    console.error('Review submission error:', e);
+                }
+            }
+
+            function showForgotView() { window.location.href = 'login.html'; }
+            function showLoginView() { window.location.href = 'login.html'; }
+
+            // --- Review System Logic ---
+            function highlightStars(orderId, rating) {
+                const container = document.getElementById(`stars-${orderId}`);
+                if (!container) return;
+
+                const stars = container.querySelectorAll('.star');
+                stars.forEach((star, index) => {
+                    star.classList.remove('filled', 'animate-bounce', 'animate-glow');
+
+                    if (index < rating) {
+                        star.classList.add('filled');
+
+                        // Animation Logic
+                        if (rating >= 5) {
+                            star.classList.add('animate-bounce');
+                        } else if (rating >= 4) {
+                            star.classList.add('animate-glow');
+                        }
+                    }
+                });
+            }
+
+            function resetStars(orderId) {
+                const input = document.getElementById(`rating-val-${orderId}`);
+                const currentRating = parseInt(input.value) || 0;
+                highlightStars(orderId, currentRating);
+            }
+
+            function selectRating(orderId, rating) {
+                document.getElementById(`rating-val-${orderId}`).value = rating;
+                highlightStars(orderId, rating);
+            }
+
+            function submitReview(orderId) {
+                const rating = document.getElementById(`rating-val-${orderId}`).value;
+                const text = document.getElementById(`review-text-${orderId}`).value;
+
+                if (rating == 0) {
+                    return;
+                }
+
+                const orders = JSON.parse(localStorage.getItem('vsr_orders'));
+                const orderIndex = orders.findIndex(o => o.id == orderId);
+
+                if (orderIndex !== -1) {
+                    orders[orderIndex].review = {
+                        rating: parseInt(rating),
+                        text: text
+                    };
+                    localStorage.setItem('vsr_orders', JSON.stringify(orders));
+
+                    // Also save to global reviews store for home page
+                    const user = JSON.parse(localStorage.getItem('vsr_user')) || {};
+                    const item = orders[orderIndex].items && orders[orderIndex].items[0];
+                    if (typeof saveReview === 'function') {
+                        saveReview(item ? item.name : 'Product', parseInt(rating), text, user.name || 'Customer');
+                    }
+
+                    loadOrders();
+                    showToast("Review submitted successfully!", "success");
+                }
+            }
+
+            // --- Dashboard Wishlist Tab ---
+            async function loadDashWishlist() {
+                const container = document.getElementById('dashWishlist');
+                if (!container) return;
+                
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                if (!user || (!user.id && !user.uid)) return;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/wishlist/${user.id || user.uid}`);
+                    if (!response.ok) throw new Error("Failed to load wishlist");
+                    const wishlist = await response.json();
+
+                    if (wishlist.length === 0) {
+                        container.innerHTML = '<p style="text-align:center; padding:30px; color:#878787;">Your wishlist is empty. <a href="products.html" style="color:#27ae60; font-weight:500;">Browse Products →</a></p>';
+                        return;
+                    }
+
+                    container.innerHTML = wishlist.map(item => `
+                        <div style="display:flex; align-items:center; gap:16px; padding:16px 0; border-bottom:1px solid #f0f0f0;">
+                            <img src="${item.image_url || 'images/milk_product.png'}" alt="${item.name}" style="width:60px; height:60px; object-fit:contain; background:#f9f9f9; border-radius:8px; padding:4px;">
+                            <div style="flex:1;">
+                                <div style="font-weight:500; font-size:0.95rem;">${item.name}</div>
+                                <div style="font-weight:700; margin-top:4px;">₹${item.price}</div>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button onclick="moveToCartFromWishlist('${item.name}'); loadDashWishlist();" style="padding:8px 14px; background:#F26C1D; color:white; border:none; border-radius:4px; font-size:0.82rem; font-weight:600; cursor:pointer;">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                                <button onclick="removeFromWishlist('${item.name}'); loadDashWishlist();" style="padding:8px 14px; background:#f5f5f5; color:#555; border:1px solid #e0e0e0; border-radius:4px; font-size:0.82rem; cursor:pointer;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (err) {
+                    console.error("Wishlist Error:", err);
+                    container.innerHTML = '<p style="text-align:center; padding:20px; color:red;">Error loading wishlist.</p>';
+                }
+            }
+
+            // --- Dashboard Invoices Tab ---
+            async function loadInvoicesList() {
+                const container = document.getElementById('invoicesList');
+                if (!container) return;
+                
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                if (!user || (!user.id && !user.uid)) return;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/orders/user/${user.id || user.uid}`);
+                    if (!response.ok) throw new Error("Failed to fetch orders");
+                    const orders = await response.json();
+
+                    if (orders.length === 0) {
+                        container.innerHTML = '<p style="text-align:center; padding:30px; color:#878787;">No invoices available. Place an order first!</p>';
+                        return;
+                    }
+
+                    container.innerHTML = orders.map(order => {
+                        const date = new Date(order.order_date).toLocaleDateString();
+                        return `
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid #f0f0f0;">
+                            <div>
+                                <div style="font-weight:600; font-size:0.95rem;"><i class="fas fa-file-invoice" style="color:#27ae60; margin-right:8px;"></i> Invoice #${order.id}</div>
+                                <div style="color:#878787; font-size:0.82rem; margin-top:4px;">Ordered on ${date}</div>
+                                <div style="font-weight:600; margin-top:2px;">₹${order.total_amount}</div>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button onclick="generateInvoice('${order.id}')" style="padding:8px 16px; background:#27ae60; color:white; border:none; border-radius:4px; font-size:0.82rem; font-weight:600; cursor:pointer;">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                } catch (err) {
+                    console.error("Invoices Error:", err);
+                    container.innerHTML = '<p style="text-align:center; padding:20px; color:red;">Error loading invoices.</p>';
+                }
+            }
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="/Js/script.js?v=1.3"></script>
+</body>
+
+</html>
+
+
+

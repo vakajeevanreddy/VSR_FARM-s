@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | VSRFARM'S</title>
+    <meta name="description" content="Browse VSRFARM'S's fresh dairy products — Buffalo Milk, Ghee, Curd, Paneer and more.">
+    <link rel="stylesheet" href="/CSS/style.css?v=1.3">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+                /* Modern & Formal Product Card UI */
+        .p-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .p-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            border-color: rgba(39, 174, 96, 0.1);
+        }
+
+        .p-card .p-img-wrap {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            padding: 24px;
+            position: relative;
+        }
+
+        .p-card .p-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .p-card:hover .p-img-wrap img {
+            transform: scale(1.05);
+        }
+
+        .p-card .p-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid #f8f8f8;
+        }
+
+        .p-card .p-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        /* ★ RATING BADGE */
+        .p-card .p-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f1f8f4;
+            color: #27ae60;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 50px;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .p-card .p-price {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+            letter-spacing: -0.5px;
+        }
+
+        .p-card .p-old-price {
+            font-size: 0.85rem;
+            color: #999;
+            text-decoration: line-through;
+            margin-bottom: 12px;
+        }
+
+        .p-size-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #555;
+            background: #fafafa;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .p-size-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fff;
+        }
+
+        /* Badges - Modern Minimal Look */
+        .p-card .p-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e1f5fe;
+            color: #039be5;
+            font-size: 0.65rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 10;
+        }
+
+        .p-card .p-tag-best {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #fff8e1;
+            color: #ffa000;
+            font-size: 0.65rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .p-card .p-tag-fest {
+            position: absolute;
+            top: 45px;
+            left: 15px;
+            background: #ffebee;
+            color: #e53935;
+            font-size: 0.6rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        /* Buttons - Formal & Clean */
+        .p-card .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .p-card .btn-quick-view {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fff;
+            color: #555;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .p-card .btn-quick-view:hover {
+            border-color: #999;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        .p-card .btn-add-cart {
+            flex: 1.8;
+            padding: 11px;
+            background: #27ae60;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
+        }
+
+        .p-card .btn-add-cart:hover {
+            background: #1e8449;
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            max-width: 1200px;
+            margin: 24px auto 20px;
+            padding: 0 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 11px 14px 11px 42px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") no-repeat 14px center;
+            transition: border-color 0.2s;
+        }
+
+        .controls-bar input:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.1);
+        }
+
+        .controls-bar select {
+            padding: 11px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .controls-bar select:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+
+        .page-title {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        .page-title h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #212121;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title h1::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #27ae60;
+            margin-top: 6px;
+            border-radius: 3px;
+        }
+
+        /* Quick View Popup */
+        .popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9000;
+        }
+
+        .popup.open {
+            display: flex;
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 36px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-content img {
+            max-height: 180px;
+            object-fit: contain;
+            margin: 16px auto;
+        }
+
+        .popup-content h2 {
+            font-size: 1.3rem;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .popup-content .popup-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: #888;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .popup-close:hover {
+            color: #e74c3c;
+        }
+
+        /* Products Grid Structure */
+        .products-page-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            padding: 0 20px;
+        }
+
+        /* Responsive Breakpoints */
+        /* Large Desktop */
+        @media (min-width: 1025px) {
+            .products-page-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Large Tablet / Small Desktop (769px - 1024px) */
+        @media (max-width: 1024px) {
+            .products-page-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Small Tablet (481px - 768px) */
+        @media (max-width: 768px) {
+            .products-page-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                padding: 0 16px;
+            }
+            .p-card .btn-quick-view, .p-card .btn-add-cart {
+                min-height: 44px; /* Accessible tap targets */
+            }
+        }
+
+        /* Mobile (Up to 480px) */
+        @media (max-width: 480px) {
+            .products-page-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 0 16px;
+            }
+
+            .p-card .p-img-wrap {
+                aspect-ratio: 4/3;
+                padding: 10px;
+            }
+
+            .p-card .p-img-wrap img {
+                object-fit: contain;
+                width: 100%;
+                height: 100%;
+            }
+
+            .p-card .p-name {
+                font-size: 1rem;
+            }
+
+            .p-card .p-price {
+                font-size: 1.1rem;
+            }
+
+            .controls-bar {
+                padding: 0 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .controls-bar input, .controls-bar select {
+                width: 100%;
+            }
+
+            .p-card .btn-quick-view, .p-card .btn-add-cart {
+                min-height: 44px; /* Essential for mobile accessibility tap size */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ===== SHARED NAVBAR ===== -->
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html" class="logo-text">
+                    <img src="/images/logo.png?v=1.3" alt="VSR Logo"> VSRFARM'S
+                </a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="products.html" class="active"><i class="fas fa-store"></i> Products</a></li>
+                <li><a href="payment.html"><i class="fas fa-credit-card"></i> Payment</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="cart-icon" onclick="window.location.href='payment.html'" title="View Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </div>
+                <!-- Profile Flip Icon -->
+                <div class="profile-flip-container" id="profileFlip">
+                    <div class="profile-flipper">
+                        <div class="profile-front"><!-- Populated by JS --></div>
+                        <div class="profile-back"><!-- Populated by JS --></div>
+                    </div>
+                </div>
+                <button id="headerLogout" class="header-logout-btn" onclick="handleGlobalLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1>Our Products</h1>
+        </div>
+
+        <!-- Controls Bar -->
+        <section class="controls-bar" aria-label="Product Filtering and Sorting">
+            <input type="search" id="search" placeholder="Search products…" autocomplete="off" aria-label="Search products">
+            <select id="sort" aria-label="Sort products">
+                <option value="default">Sort by</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+            </select>
+        </section>
+
+        <!-- Product Grid -->
+        <section class="products-page-grid" id="productList" aria-label="Product Listing"></section>
+    </main>
+
+    <!-- Quick View Popup -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()" title="Close">&times;</button>
+            <h2 id="pTitle"></h2>
+            <img id="pImg" src="" alt="">
+            <div class="popup-price" id="pPrice"></div>
+            <button class="btn-add-cart" style="width:100%; padding:12px; font-size:1rem;" onclick="popupAddCart()">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <p>&copy; 2024 VSRFARM'S. All Rights Reserved.</p>
+        <p>Kavali, Andhra Pradesh - 524201</p>
+    </footer>
+
+    <script src="/Js/script.js?v=1.3"></script>
+    <script>
+        /* ===== FESTIVAL LOGIC ===== */
+        const festivalMonths = [1, 3, 8, 10, 11, 12];
+
+        function isFestival() {
+            return festivalMonths.includes(new Date().getMonth() + 1);
+        }
+
+        function festivalPrice(price) {
+            if (isFestival()) {
+                return parseFloat((price * 1.5 * 0.7).toFixed(2));
+            }
+            return price;
+        }
+
+        /* ===== PRODUCT DATA ===== */
+        let products = []; // Initialized as empty, will be fetched
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`);
+                if (!response.ok) throw new Error('Failed to fetch from backend');
+                const dbResults = await response.json();
+                localStorage.setItem('vsr_products_cache', JSON.stringify(dbResults));
+
+                // Map database fields to frontend structure with new local high-quality images
+                const customImageMap = {
+                    1: '/images/milk_new.png',
+                    2: '/images/ghee_new.png',
+                    3: '/images/curd_new.png',
+                    4: '/images/paneer_new.png'
+                };
+
+                // Add sizes dynamically based on product ID
+                const customPricesMap = {
+                    1: [
+                        { label: "0.5 Lit", price: 37 },
+                        { label: "1 Lit", price: 75 }
+                    ],
+                    2: [
+                        { label: "0.5 Kg", price: 500 },
+                        { label: "1 Kg", price: 1000 }
+                    ],
+                    3: [
+                        { label: "0.5 Lit", price: 45 },
+                        { label: "1 Lit", price: 80 }
+                    ],
+                    4: [
+                        { label: "0.5 Kg", price: 225 },
+                        { label: "1 Kg", price: 450 }
+                    ]
+                };
+
+                products = dbResults.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: customPricesMap[p.id] ? customPricesMap[p.id][0].price : p.price,
+                    description: p.description,
+                    rating: 4.5,
+                    ratingCount: 100,
+                    tag: p.category || "Fresh",
+                    image: customImageMap[p.id] || p.image_url || "images/milk_product.png",
+                    sizes: customPricesMap[p.id] || [
+                        { label: "Standard", price: p.price }
+                    ],
+                    best: p.id % 2 === 0
+                }));
+
+                renderProducts(products);
+            } catch (error) {
+                console.error('Products fetch error:', error);
+                alert('Connection to backend products failed. Please ensure the server is running.');
+            }
+        }
+
+        /* ===== RENDER ===== */
+        let currentProduct = null; // for popup add-cart
+
+        function renderProducts(list) {
+            const container = document.getElementById('productList');
+            if (!list) list = products;
+            container.innerHTML = '';
+
+            list.forEach(p => {
+                const displayPrice = festivalPrice(p.sizes[0].price);
+                const originalPrice = p.sizes[0].price;
+                const isFest = isFestival();
+
+                const sizeOptions = p.sizes.map((s, i) =>
+                    `<option value="${s.price}" ${i === 0 ? 'selected' : ''}>${s.label} — ₹${s.price}</option>`
+                ).join('');
+
+                const card = document.createElement('article');
+                card.className = 'p-card';
+                card.dataset.name = p.name;
+                card.dataset.price = displayPrice;
+                card.dataset.rating = p.rating;
+
+                card.innerHTML = `
+                    ${p.best ? `<div class="p-tag-best">⭐ Best</div>` : ''}
+                    ${isFest ? `<div class="p-tag-fest">🎉 Fest</div>` : ''}
+                    <div class="p-tag">${p.tag}</div>
+
+                    <div class="p-img-wrap">
+                        <img src="${p.image}" alt="${p.name}" loading="lazy">
+                    </div>
+
+                    <div class="p-body">
+                        <div class="p-name">${p.name}</div>
+
+                        <!-- RATING BADGE — same layout for 4-star and 5-star, always aligned -->
+                        <div class="p-rating">
+                            ${p.rating} <i class="fas fa-star"></i>
+                            <span style="font-weight:400; font-size:0.72rem; color:rgba(255,255,255,0.8);">(${p.ratingCount})</span>
+                        </div>
+
+                        <select class="p-size-select" onchange="updateCardPrice(this, ${originalPrice})">
+                            ${sizeOptions}
+                        </select>
+
+                        ${isFest
+                            ? `<div class="p-price">₹<span class="cur-price">${displayPrice}</span></div>
+                               <div class="p-old-price">₹${originalPrice}</div>`
+                            : `<div class="p-price">₹<span class="cur-price">${originalPrice}</span></div>`
+                        }
+
+                        <div class="btn-row">
+                            <button class="btn-quick-view" aria-label="Quick view ${p.name}" onclick="quickView('${p.name}','${p.image}',this.closest('.p-card').querySelector('.cur-price').innerText,'${p.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn-add-cart" aria-label="Add ${p.name} to cart" onclick="handleAddCart(this, '${p.name}', '${p.image}', '${p.id}')">
+                                <i class="fas fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* Update price when size changes */
+        function updateCardPrice(select, basePrice) {
+            const newPrice = parseFloat(select.value);
+            const displayPrice = festivalPrice(newPrice);
+            const card = select.closest('.p-card');
+            card.querySelector('.cur-price').innerText = displayPrice;
+            card.dataset.price = displayPrice;
+        }
+
+        /* ===== ADD TO CART ===== */
+        function handleAddCart(btn, name, image, id) {
+            const card = btn.closest('.p-card');
+            const price = parseFloat(card.querySelector('.cur-price').innerText);
+            addToCart(name, price, image, 1, id);
+
+            // Visual feedback
+            btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+            btn.style.background = '#27ae60';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add';
+                btn.style.background = '';
+            }, 1500);
+        }
+
+        /* ===== QUICK VIEW ===== */
+        let popupProductData = {};
+
+        function quickView(name, img, price, id) {
+            popupProductData = { name, image: img, price, id };
+            document.getElementById('pTitle').innerText = name;
+            document.getElementById('pImg').src = img;
+            document.getElementById('pImg').alt = name;
+            document.getElementById('pPrice').innerText = '₹' + price;
+            document.getElementById('popup').classList.add('open');
+        }
+
+        function closePopup() {
+            document.getElementById('popup').classList.remove('open');
+        }
+
+        function popupAddCart() {
+            if (popupProductData.name) {
+                addToCart(popupProductData.name, parseFloat(popupProductData.price), popupProductData.image, 1, popupProductData.id);
+                closePopup();
+            }
+        }
+
+        // Close popup on backdrop click
+        document.getElementById('popup').addEventListener('click', function (e) {
+            if (e.target === this) closePopup();
+        });
+
+        /* ===== SEARCH ===== */
+        document.getElementById('search').addEventListener('keyup', function () {
+            const val = this.value.toLowerCase().trim();
+            document.querySelectorAll('.p-card').forEach(card => {
+                const name = card.dataset.name.toLowerCase();
+                card.style.display = name.includes(val) ? '' : 'none';
+            });
+        });
+
+        /* ===== SORT ===== */
+        document.getElementById('sort').addEventListener('change', function () {
+            const val = this.value;
+            const cards = [...document.querySelectorAll('.p-card')];
+
+            if (val === 'price-asc') {
+                cards.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+            } else if (val === 'price-desc') {
+                cards.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+            } else if (val === 'rating') {
+                cards.sort((a, b) => parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating));
+            } else {
+                renderProducts();
+                return;
+            }
+
+            const container = document.getElementById('productList');
+            container.innerHTML = '';
+            cards.forEach(c => container.appendChild(c));
+        });
+
+        /* ===== INIT ===== */
+        fetchProducts();
+    </script>
+</body>
+
+</html>
+
+
+

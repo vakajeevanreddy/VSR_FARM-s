@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - VSRFARM'S</title>
+    <link rel="stylesheet" href="/CSS/style.css?v=1.3">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .wishlist-container {
+            max-width: 1280px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        .wishlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .wishlist-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .wishlist-header span {
+            color: #878787;
+            font-size: 0.95rem;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .wishlist-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .wishlist-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border-color: #e0e0e0;
+        }
+
+        .wishlist-card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: #fafafa;
+            padding: 16px;
+        }
+
+        .wishlist-card-body {
+            padding: 16px;
+        }
+
+        .wishlist-card-body h3 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #212121;
+            margin-bottom: 6px;
+        }
+
+        .wishlist-card-body .price {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 14px;
+        }
+
+        .wishlist-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wishlist-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-move-cart {
+            background: #F26C1D;
+            color: white;
+        }
+
+        .btn-move-cart:hover {
+            background: #d35400;
+        }
+
+        .btn-remove-wish {
+            background: #f5f5f5;
+            color: #555;
+            border: 1px solid #e0e0e0 !important;
+        }
+
+        .btn-remove-wish:hover {
+            background: #fee;
+            color: #e74c3c;
+            border-color: #e74c3c !important;
+        }
+
+        .empty-wishlist {
+            text-align: center;
+            padding: 80px 20px;
+            color: #878787;
+        }
+
+        .empty-wishlist i {
+            font-size: 4rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .empty-wishlist h2 {
+            font-size: 1.4rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .empty-wishlist a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 28px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .empty-wishlist a:hover {
+            background: #219150;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .wishlist-card-img {
+                height: 150px;
+            }
+
+            .wishlist-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html" class="logo-text">
+                    <img src="/images/logo.png?v=1.3" alt="VSR Logo"> VSRFARM'S
+                </a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="products.html"><i class="fas fa-store"></i> Products</a></li>
+                <li><a href="payment.html"><i class="fas fa-credit-card"></i> Payment</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="cart-icon" onclick="window.location.href='payment.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </div>
+                <!-- Profile Flip Icon -->
+                <div class="profile-flip-container" id="profileFlip">
+                    <div class="profile-flipper">
+                        <div class="profile-front">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="profile-back">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="wishlist-container">
+        <div class="wishlist-header">
+            <h1><i class="fas fa-heart" style="color:#e74c3c; margin-right:8px;"></i> My Wishlist</h1>
+            <span id="wishlist-count-text">0 items</span>
+        </div>
+        <div class="wishlist-grid" id="wishlistGrid">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <footer id="footer">
+        <p>&copy; 2024 VSRFARM'S. All Rights Reserved.</p>
+        <p>Kavali, Andhra Pradesh - 524201</p>
+    </footer>
+
+    <script src="/Js/script.js?v=1.3"></script>
+    <script>
+        function renderWishlistPage() {
+            const grid = document.getElementById('wishlistGrid');
+            const countText = document.getElementById('wishlist-count-text');
+            const wishlist = JSON.parse(localStorage.getItem('vsr_wishlist')) || [];
+
+            countText.textContent = wishlist.length + (wishlist.length === 1 ? ' item' : ' items');
+
+            if (wishlist.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-wishlist" style="grid-column: 1 / -1;">
+                        <i class="far fa-heart"></i>
+                        <h2>Your wishlist is empty</h2>
+                        <p>Save items you love to your wishlist and review them anytime.</p>
+                        <a href="products.html"><i class="fas fa-store"></i> Browse Products</a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = wishlist.map(item => `
+                <div class="wishlist-card fade-in">
+                    <img src="${item.image}" alt="${item.name}" class="wishlist-card-img">
+                    <div class="wishlist-card-body">
+                        <h3>${item.name}</h3>
+                        <div class="price">₹${item.price}</div>
+                        <div class="wishlist-actions">
+                            <button class="btn-move-cart" onclick="moveToCartFromWishlist('${item.name}'); renderWishlistPage();">
+                                <i class="fas fa-shopping-cart"></i> Move to Cart
+                            </button>
+                            <button class="btn-remove-wish" onclick="removeFromWishlist('${item.name}'); renderWishlistPage();">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderWishlistPage);
+    </script>
+</body>
+
+</html>
+
+
+

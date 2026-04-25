@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart | VSRFARM'S</title>
+    <meta name="description" content="Your shopping cart at VSRFARM'S.">
+    <link rel="stylesheet" href="/CSS/style.css?v=1.3">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Cart page styles */
+        .cart-container {
+            max-width: 1100px;
+            margin: 30px auto 50px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .cart-items-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        }
+
+        .cart-items-box h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.2s;
+        }
+
+        .cart-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-row img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 6px;
+            border: 1px solid #eee;
+            flex-shrink: 0;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            font-size: 0.88rem;
+            color: #878787;
+            margin-bottom: 8px;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1.5px solid #ddd;
+            background: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #333;
+        }
+
+        .qty-btn:hover {
+            border-color: #27ae60;
+            color: #27ae60;
+        }
+
+        .qty-value {
+            font-weight: 700;
+            font-size: 1rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .cart-item-total {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #212121;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .cart-item-remove {
+            background: #fff5f5;
+            border: none;
+            color: #e74c3c;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-remove:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-cart i {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+            display: block;
+            color: #ddd;
+        }
+
+        .empty-cart a {
+            display: inline-block;
+            margin-top: 16px;
+            background: #27ae60;
+            color: #fff;
+            padding: 11px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .empty-cart a:hover { background: #219150; }
+
+        /* Order Summary */
+        .cart-summary-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            position: sticky;
+            top: 80px;
+        }
+
+        .cart-summary-box h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1.5px solid #f0f0f0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .total-amount {
+            color: #27ae60;
+            font-size: 1.25rem;
+        }
+
+        .btn-checkout {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(39,174,96,0.3);
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39,174,96,0.4);
+        }
+
+        .btn-continue {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 11px;
+            background: #fff;
+            color: #555;
+            border: 1.5px solid #ddd;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-continue:hover {
+            border-color: #27ae60;
+            color: #27ae60;
+        }
+
+        .page-heading {
+            max-width: 1100px;
+            margin: 28px auto 0;
+            padding: 0 20px;
+        }
+
+        .page-heading h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #212121;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ===== SHARED NAVBAR ===== -->
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html" class="logo-text">
+                    <img src="/images/logo.png?v=1.3" alt="VSR Logo"> VSRFARM'S
+                </a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="products.html"><i class="fas fa-store"></i> Products</a></li>
+                <li><a href="payment.html"><i class="fas fa-credit-card"></i> Payment</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="cart-icon" onclick="window.location.href='payment.html'" title="Checkout">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </div>
+                <div class="profile-flip-container" id="profileFlip">
+                    <div class="profile-flipper">
+                        <div class="profile-front"><!-- Populated by JS --></div>
+                        <div class="profile-back"><!-- Populated by JS --></div>
+                    </div>
+                </div>
+                <button id="headerLogout" class="header-logout-btn" onclick="handleGlobalLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="page-heading">
+        <h1><i class="fas fa-shopping-cart" style="color:#27ae60; margin-right:10px;"></i>Your Cart</h1>
+    </div>
+
+    <div class="cart-container">
+        <!-- Cart Items -->
+        <div class="cart-items-box">
+            <h2>Cart Items</h2>
+            <div id="cartItems">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="cart-summary-box">
+            <h3>Order Summary</h3>
+            <div class="summary-row">
+                <span>Items</span>
+                <span id="itemCount">0</span>
+            </div>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotalAmount">₹0</span>
+            </div>
+            <div class="summary-total">
+                <span>Total</span>
+                <span class="total-amount">₹<span id="grandTotal">0</span></span>
+            </div>
+            <button class="btn-checkout" onclick="window.location.href='payment.html'">
+                <i class="fas fa-lock"></i> Proceed to Checkout
+            </button>
+            <a href="products.html" class="btn-continue">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <p>&copy; 2024 VSRFARM'S. All Rights Reserved.</p>
+        <p>Kavali, Andhra Pradesh - 524201</p>
+    </footer>
+
+    <script src="/Js/script.js?v=1.3"></script>
+    <script>
+        /* Load cart from localStorage — consistent with products.html and payment.html */
+        function renderCart() {
+            const cartData = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+            const container = document.getElementById('cartItems');
+            const grandTotalEl = document.getElementById('grandTotal');
+            const subtotalEl = document.getElementById('subtotalAmount');
+            const itemCountEl = document.getElementById('itemCount');
+
+            if (cartData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p style="font-size:1.1rem; font-weight:500;">Your cart is empty</p>
+                        <p style="font-size:0.9rem; margin-top:4px;">Browse our fresh dairy products</p>
+                        <a href="products.html">Shop Now →</a>
+                    </div>
+                `;
+                grandTotalEl.innerText = '0';
+                if (subtotalEl) subtotalEl.innerText = '₹0';
+                if (itemCountEl) itemCountEl.innerText = '0';
+                return;
+            }
+
+            let total = 0;
+            let totalQty = 0;
+            container.innerHTML = '';
+
+            cartData.forEach((item, index) => {
+                const itemPrice = parseFloat(item.price) || 0;
+                const itemQty = parseInt(item.quantity) || 1;
+                const itemTotal = itemPrice * itemQty;
+                total += itemTotal;
+                totalQty += itemQty;
+
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.innerHTML = `
+                    <img src="${item.image || 'images/default_product.png'}" alt="${item.name || 'Product'}">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name || 'Product'}</div>
+                        <div class="cart-item-price">₹${itemPrice} each</div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="changeQty('${item.name}', -1)">−</button>
+                            <span class="qty-value">${itemQty}</span>
+                            <button class="qty-btn" onclick="changeQty('${item.name}', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="cart-item-total">₹${itemTotal}</div>
+                    <button class="cart-item-remove" onclick="removeCartItem('${item.name}')" title="Remove">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                container.appendChild(row);
+            });
+
+            grandTotalEl.innerText = total;
+            if (subtotalEl) subtotalEl.innerText = '₹' + total;
+            if (itemCountEl) itemCountEl.innerText = totalQty;
+        }
+
+        async function changeQty(name, delta) {
+            if (window.changeCartQty) {
+                await window.changeCartQty(name, delta);
+                renderCart();
+            }
+        }
+
+        async function removeCartItem(name) {
+            if (window.removeFromCart) {
+                await window.removeFromCart(name);
+                renderCart();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+
+</html>
+
+
+

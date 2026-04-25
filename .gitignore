@@ -1,0 +1,14 @@
+# Root .gitignore
+**/node_modules/
+**/.env
+error.log
+*.log
+tunnel.txt
+tunnel2.txt
+.firebase/
+public/server/
+dist/
+build/
+.DS_Store
+.vscode/
+.idea/

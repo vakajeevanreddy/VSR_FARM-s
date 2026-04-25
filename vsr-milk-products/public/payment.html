@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - VSRFARM'S</title>
+    <link rel="stylesheet" href="/CSS/style.css?v=1.3">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body class="checkout-page-bg">
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html" class="logo-text">
+                    <img src="/images/logo.png?v=1.3" alt="VSR Logo"> VSRFARM'S
+                </a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="products.html"><i class="fas fa-store"></i> Products</a></li>
+                <li><a href="payment.html" class="active"><i class="fas fa-credit-card"></i> Payment</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="cart-icon" onclick="window.location.href='payment.html'">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </div>
+                <!-- Profile Flip Icon -->
+                <div class="profile-flip-container" id="profileFlip">
+                    <div class="profile-flipper">
+                        <div class="profile-front">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="profile-back">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <button id="headerLogout" class="header-logout-btn" onclick="handleGlobalLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- Premium 3-Step Navigation -->
+        <div class="progress-track modern-tabs" id="checkout-progress">
+            <div class="step active" data-step="1" onclick="switchStep(1)">
+                <div class="step-indicator" id="step1-indicator"><i class="fas fa-check"></i></div>
+                <span>Cart</span>
+            </div>
+            <div class="step" data-step="2" onclick="switchStep(2)">
+                <div class="step-indicator" id="step2-indicator">2</div>
+                <span>Payment</span>
+            </div>
+            <div class="step" data-step="3" id="step-done-tab">
+                <div class="step-indicator" id="step3-indicator">3</div>
+                <span>Done</span>
+            </div>
+        </div>
+
+        <!-- STEP 1: CART -->
+        <div id="step-1" class="step-content" style="display: block;">
+            <div class="checkout-centered-container">
+                <div class="card-box compact-card">
+                    <div class="checkout-card-header">
+                        <h2 class="checkout-card-title"><i class="fas fa-shopping-cart"></i> Your Cart</h2>
+                        <button onclick="emptyCartAndRefresh()" class="btn-empty-red"><i class="fas fa-trash-alt"></i>
+                            Empty Cart</button>
+                    </div>
+                    <div id="main-cart-items">
+                        <!-- Cart items rendered here via JS -->
+                    </div>
+                    <div class="checkout-total-row">
+                        <h3 class="checkout-total-text">Total: <span id="main-cart-total"
+                                class="checkout-total-amount">₹0</span></h3>
+                        <button onclick="switchStep(2)" class="standard-btn pay-btn-gradient"
+                            id="proceed-to-payment-btn"
+                            style="width: auto; padding: 12px 35px; border-radius: 30px;">Proceed to Payment <i
+                                class="fas fa-arrow-right" style="margin-left: 8px; font-size: 0.9rem;"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: REDESIGNED PAYMENT VIEW -->
+        <div id="step-2" class="step-content" style="display: none;">
+            <div class="checkout-layout-wrapper">
+                <div class="checkout-main-grid">
+                    <!-- Left: Billing Details Card -->
+                    <div class="card-box premium-card">
+                        <div class="card-header-bg green-header">
+                            <i class="fas fa-address-book"></i> Billing Details
+                        </div>
+                        <div class="card-body-padding">
+                            <form id="billing-form" class="icon-form">
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user label-icon"></i>
+                                    <input type="text" id="billName" placeholder="Full Name" required
+                                        class="icon-input">
+                                </div>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-envelope label-icon"></i>
+                                    <input type="email" id="billEmail" placeholder="Email Address" required
+                                        class="icon-input">
+                                </div>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-phone label-icon"></i>
+                                    <input type="tel" id="billPhone" placeholder="Phone" required minlength="10"
+                                        maxlength="10" pattern="[0-9]{10}" class="icon-input">
+                                </div>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-map-marker-alt label-icon" style="top: 20px;"></i>
+                                    <textarea id="billAddress" placeholder="Delivery Address" required
+                                        class="icon-input"
+                                        style="height: 100px; padding-top: 15px; resize: none;"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right: Order Summary Card -->
+                    <div class="card-box premium-card">
+                        <div class="card-header-bg orange-header">
+                            <i class="fas fa-shopping-basket"></i> Order Summary
+                        </div>
+                        <div class="card-body-padding">
+                            <div id="payment-summary-list" class="summary-list-premium">
+                                <!-- JS renders items here -->
+                            </div>
+                            <div class="summary-footer-premium">
+                                <div class="row-flex">
+                                    <span class="label-bold">Subtotal</span>
+                                    <span id="payment-subtotal" class="price-bold">₹0</span>
+                                </div>
+                                <div class="row-flex highlight-row">
+                                    <span class="label-bold">Total</span>
+                                    <span id="payment-total-amt" class="price-total-green">₹0</span>
+                                </div>
+                                <button onclick="emptyCartAndRefresh()" class="btn-empty-red">
+                                    <i class="fas fa-trash-alt"></i> Empty Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom: Centered Payment Options -->
+                <div class="payment-action-center">
+                    <div class="payment-tabs-row">
+                        <button class="pay-method-btn active" data-method="upi">
+                            <i class="fas fa-receipt"></i> UPI / QR
+                        </button>
+                        <button class="pay-method-btn" data-method="card">
+                            <i class="fas fa-credit-card"></i> Credit / Debit Card
+                        </button>
+                        <button class="pay-method-btn" data-method="cash">
+                            <i class="fas fa-money-bill-wave"></i> Cash on Delivery
+                        </button>
+                    </div>
+
+                    <div id="payment-details-view" class="method-details-container">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button id="pay-now-btn" disabled class="standard-btn pay-btn-gradient btn-large-rounded">
+                            Proceed to Pay
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: SUCCESS -->
+        <div id="step-3" class="step-content" style="display: none; text-align: center;">
+            <div class="checkout-centered-container">
+                <div class="card-box premium-card success-view">
+                    <div class="success-check-anim"><i class="fas fa-check-circle"></i></div>
+                    <h2 class="thanks-text">Thanks for shopping</h2>
+                    <p class="order-id-tag" id="display-order-id">Order #000000</p>
+
+                    <div id="done-follow-msg" class="social-fade-msg">
+                        <p class="follow-text">Follow for more updates</p>
+                        <a href="https://instagram.com" target="_blank" class="insta-icon-large">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <button onclick="window.location.href='index.html'" class="btn-outline-home">Return to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 VSRFARM'S. All Rights Reserved.</p>
+    </footer>
+
+    <script src="Js/script.js"></script>
+    <script>
+        // --- Redesigned Checkout Logic ---
+        let currentStep = 1;
+        let selectedPaymentMethod = 'upi';
+
+        function renderMainCart() {
+            const container = document.getElementById('main-cart-items');
+            const totalEl = document.getElementById('main-cart-total');
+            const proceedBtn = document.getElementById('proceed-to-payment-btn');
+            const cartItems = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+            const step1Ind = document.getElementById('step1-indicator');
+
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cartItems.length === 0) {
+                container.innerHTML = '<p class="empty-cart-text">Your cart is empty. Start shopping!</p>';
+                totalEl.innerText = '₹0';
+                proceedBtn.disabled = true;
+                if (step1Ind) step1Ind.innerHTML = '1';
+                return;
+            }
+
+            proceedBtn.disabled = false;
+            if (step1Ind) step1Ind.innerHTML = '<i class="fas fa-check"></i>';
+
+            cartItems.forEach(item => {
+                const itemPrice = parseFloat(item.price) || 0;
+                const itemQty = parseInt(item.quantity) || 1;
+                const itemTotal = itemPrice * itemQty;
+                total += itemTotal;
+                const div = document.createElement('div');
+                div.className = 'cart-item-modern-v2';
+                div.innerHTML = `
+                    <div class="item-info-v2">
+                        <img src="${item.image || 'images/default_product.png'}" class="item-img-v2">
+                        <div>
+                            <div class="item-name-v2">${item.name || 'Product'}</div>
+                            <div class="item-sub-v2">₹${itemPrice} × ${itemQty}</div>
+                        </div>
+                    </div>
+                    <div class="item-action-v2">
+                        <div class="item-total-v2">₹${itemTotal}</div>
+                        <button onclick="removeMainCartItem('${item.name}')" class="btn-delete-item" title="Remove"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            totalEl.innerText = '₹' + total;
+        }
+
+        function removeMainCartItem(name) {
+            let items = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+            items = items.filter(i => i.name !== name);
+            localStorage.setItem('vsr_cart', JSON.stringify(items));
+            renderMainCart();
+            if (window.updateCartCount) window.updateCartCount();
+        }
+
+        function emptyCartAndRefresh() {
+            if (confirm("Are you sure you want to empty your cart?")) {
+                localStorage.removeItem('vsr_cart');
+                renderMainCart();
+                if (window.updateCartCount) window.updateCartCount();
+                switchStep(1);
+            }
+        }
+
+        function switchStep(n) {
+            const cartItems = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+            if (n === 2 && cartItems.length === 0) {
+                if (window.showToast) window.showToast('Your cart is empty!', 'error');
+                return;
+            }
+
+            document.querySelectorAll('.step-content').forEach(el => el.style.display = 'none');
+            const target = document.getElementById('step-' + n);
+            if (target) target.style.display = 'block';
+
+            document.querySelectorAll('.progress-track .step').forEach(el => {
+                const stepNum = parseInt(el.getAttribute('data-step'));
+                if (stepNum === n) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+
+            if (n === 2) renderPaymentSummary();
+            currentStep = n;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderPaymentSummary() {
+            const list = document.getElementById('payment-summary-list');
+            const subtotalEl = document.getElementById('payment-subtotal');
+            const totalAmtEl = document.getElementById('payment-total-amt');
+            const cartItems = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+            list.innerHTML = '';
+            let total = 0;
+
+            cartItems.forEach(item => {
+                const itemPrice = parseFloat(item.price) || 0;
+                const itemQty = parseInt(item.quantity) || 1;
+                const itemTotal = itemPrice * itemQty;
+                total += itemTotal;
+                const div = document.createElement('div');
+                div.className = 'summary-row-v2';
+                div.innerHTML = `
+                    <div class="sum-name-qty">
+                        <img src="${item.image || 'images/default_product.png'}" class="sum-item-img">
+                        <div style="display:flex; flex-direction:column;">
+                            <span class="sum-name">${item.name || 'Product'}</span>
+                            <span class="sum-qty-tag">×${itemQty}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="sum-price">₹${itemTotal}</span>
+                        <button onclick="removeMainCartItem('${item.name}'); renderPaymentSummary();" class="btn-tiny-delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+            subtotalEl.innerText = '₹' + total;
+            totalAmtEl.innerText = '₹' + total;
+            validateStep2();
+        }
+
+        function getCartTotalPayment() {
+            const cartItems = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+            return cartItems.reduce((sum, item) => sum + (parseFloat(item.price) * parseInt(item.quantity || 1)), 0);
+        }
+
+        function updatePaymentDetailsView() {
+            const area = document.getElementById('payment-details-view');
+            area.innerHTML = '';
+            const totalAmt = getCartTotalPayment();
+
+            if (selectedPaymentMethod === 'upi') {
+                const upiId = '8143713538@ptsbi';
+                const upiLink = `upi://pay?pa=${upiId}&pn=VSR%20FARMS&am=${totalAmt}&cu=INR`;
+                area.innerHTML = `
+                <div class="upi-method-view">
+                    <p class="method-hint">Scan with any UPI app to pay <strong>₹${totalAmt}</strong></p>
+                    <div class="qr-container-v2">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiLink)}" alt="QR Code">
+                        <div class="upi-id-badge" style="display:flex; justify-content:center; align-items:center; gap:10px;">
+                            ${upiId}
+                            <button onclick="navigator.clipboard.writeText('${upiId}'); alert('UPI ID copied to clipboard!');" style="background:none; border:none; color:#27ae60; cursor:pointer;" title="Copy UPI ID"><i class="fas fa-copy"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+            } else if (selectedPaymentMethod === 'card') {
+                area.innerHTML = `
+                <div class="card-method-box">
+                    <i class="fas fa-credit-card big-icon-gray"></i>
+                    <p>Card payments will be available here soon.</p>
+                </div>`;
+            } else {
+                area.innerHTML = `
+                <div class="cash-method-box">
+                    <i class="fas fa-money-bill-wave big-icon-green"></i>
+                    <p>Pay with Cash on Delivery</p>
+                    <span class="sub-hint">Available for selected locations</span>
+                </div>`;
+            }
+        }
+
+        function validateStep2() {
+            const billFields = ['billName', 'billEmail', 'billPhone', 'billAddress'];
+            const btn = document.getElementById('pay-now-btn');
+            const cartItems = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+
+            const fieldsValid = billFields.every(id => {
+                const el = document.getElementById(id);
+                return el && el.value.trim().length > 0 && el.checkValidity();
+            });
+
+            btn.disabled = !(fieldsValid && cartItems.length > 0);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderMainCart();
+            updatePaymentDetailsView();
+
+            document.querySelectorAll('.pay-method-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedPaymentMethod = this.getAttribute('data-method');
+                    updatePaymentDetailsView();
+                });
+            });
+
+            const billFields = ['billName', 'billEmail', 'billPhone', 'billAddress'];
+            billFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', validateStep2);
+            });
+
+            document.getElementById('pay-now-btn').addEventListener('click', function () {
+                const cart = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+                if (cart.length === 0) return;
+
+                if (selectedPaymentMethod === 'cash') {
+                    // Local process for Cash on Delivery
+                    processOrderLocal();
+                } else {
+                    // Razorpay for UPI and Card
+                    initiateRazorpayPayment();
+                }
+            });
+
+            function initiateRazorpayPayment() {
+                const cart = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+                const total = cart.reduce((s, i) => s + (parseFloat(i.price) * parseInt(i.quantity)), 0);
+                const billName = document.getElementById('billName').value;
+                const billEmail = document.getElementById('billEmail').value;
+                const billPhone = document.getElementById('billPhone').value;
+
+                const options = {
+                    "key": "rzp_test_YOUR_KEY_HERE", // Replace with your actual Razorpay Key ID
+                    "amount": total * 100, // Amount in paise
+                    "currency": "INR",
+                    "name": "VSRFARM'S",
+                    "description": "Payment for fresh farm products",
+                    "image": "/images/logo.png?v=1.3",
+                    "handler": function (response) {
+                        // Payment Successful
+                        processOrderLocal(response.razorpay_payment_id);
+                    },
+                    "prefill": {
+                        "name": billName,
+                        "email": billEmail,
+                        "contact": billPhone
+                    },
+                    "theme": {
+                        "color": "#27ae60"
+                    },
+                    "modal": {
+                        "ondismiss": function () {
+                            const btn = document.getElementById('pay-now-btn');
+                            btn.disabled = false;
+                            btn.innerHTML = 'Proceed to Pay';
+                            if (window.showToast) window.showToast('Payment cancelled.', 'info');
+                        }
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    if (window.showToast) window.showToast('Payment failed: ' + response.error.description, 'error');
+                });
+
+                const btn = document.getElementById('pay-now-btn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                btn.disabled = true;
+                rzp.open();
+            }
+
+            async function processOrderLocal(paymentId = null) {
+                const btn = document.getElementById('pay-now-btn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing Order...';
+                btn.disabled = true;
+
+                const cart = JSON.parse(localStorage.getItem('vsr_cart')) || [];
+                const user = JSON.parse(localStorage.getItem('vsr_user'));
+                const total = cart.reduce((s, i) => s + (parseFloat(i.price) * parseInt(i.quantity)), 0);
+                
+                if (!user || (!user.id && !user.uid)) {
+                    if (window.showToast) window.showToast('Please login to place an order', 'error');
+                    btn.innerHTML = 'Proceed to Pay';
+                    btn.disabled = false;
+                    return;
+                }
+
+                const orderData = {
+                    user_id: user.id || user.uid,
+                    address_id: null, // Basic version
+                    total_amount: total,
+                    items: cart,
+                    payment_method: selectedPaymentMethod,
+                    transaction_id: paymentId
+                };
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/orders/create`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        const orderId = result.orderId || ('ORD' + Math.floor(Math.random() * 900000 + 100000));
+
+                        // Local cleanup
+                        localStorage.removeItem('vsr_cart');
+                        if (window.updateCartCount) window.updateCartCount();
+
+                        // Backend cart cleanup
+                        try {
+                            await fetch(`${API_BASE_URL}/cart/clear/${user.id || user.uid}`, { method: 'DELETE' });
+                        } catch(e) { console.error('Cart clear error:', e); }
+
+                        document.getElementById('display-order-id').innerText = 'Order #' + orderId;
+                        const step2Ind = document.getElementById('step2-indicator');
+                        if (step2Ind) step2Ind.innerHTML = '<i class="fas fa-check"></i>';
+
+                        switchStep(3);
+                    } else {
+                        const err = await response.json();
+                        throw new Error(err.error || 'Failed to place order');
+                    }
+                } catch (error) {
+                    console.error('Order error:', error);
+                    if (window.showToast) window.showToast(error.message, 'error');
+                    btn.innerHTML = 'Proceed to Pay';
+                    btn.disabled = false;
+                }
+            }
+        });
+    </script>
+
+    <!-- Duplicate backend fetch script removed — cart is handled by renderMainCart() above via localStorage -->
+</body>
+
+</html>
+
+
+
