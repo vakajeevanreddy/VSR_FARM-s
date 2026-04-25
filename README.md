@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # VSR FARM'S - Milk Products Management System
 
 A full-stack application for managing milk products, orders, and customer profiles.
@@ -57,3 +58,7 @@ git remote add origin https://github.com/yourusername/vsr_farms.git
 git branch -M main
 git push -u origin main
 ```
+=======
+# VSR_FARM-s
+E commerce Dairy Farm Website
+>>>>>>> 3d6cb0c8247f9ad47ed12c0c2d9dec38a32df911
