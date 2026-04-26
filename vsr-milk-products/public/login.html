@@ -305,7 +305,7 @@
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                         <input type="checkbox" id="rememberMe" style="width: auto;"> Remember Me
                     </label>
-                    <a href="javascript:alert('Please contact support to reset your password.')" id="forgotPassword">Forgot Password?</a>
+                    <a href="#" onclick="showResetPasswordModal()">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="login-btn" id="loginBtn">Login</button>
@@ -348,6 +348,19 @@
             </div>
 
             <p class="signup-text">Don't have an account? <a href="signup.html">Create Account</a></p>
+        </div>
+    </div>
+    <!-- MOCK PASSWORD RESET MODAL -->
+    <div id="resetPasswordModal" class="otp-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="otp-content" style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <h3 style="margin-bottom: 15px; color: var(--primary);">Reset Password</h3>
+            <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">Enter your registered email address and a new password below.</p>
+            
+            <input type="email" id="resetEmail" class="otp-input" placeholder="Enter your email" style="margin-bottom: 15px; font-size: 1rem;">
+            <input type="password" id="resetNewPassword" class="otp-input" placeholder="Enter new password" style="margin-bottom: 20px; font-size: 1rem;">
+            
+            <button class="save-btn" onclick="submitPasswordReset()" id="submitResetBtn" style="width: 100%; margin-bottom: 10px;">Reset Password</button>
+            <button class="edit-btn" onclick="closeResetPasswordModal()" style="width: 100%; color: #e74c3c;">Cancel</button>
         </div>
     </div>
     
@@ -426,7 +439,50 @@
             }
         });
 
-        // Removed forgot password listener since it's unsupported in custom backend
+        // --- Demo Password Reset ---
+        function showResetPasswordModal() {
+            const emailInput = document.getElementById('email').value;
+            if (emailInput) document.getElementById('resetEmail').value = emailInput;
+            document.getElementById('resetPasswordModal').style.display = 'flex';
+        }
+
+        function closeResetPasswordModal() {
+            document.getElementById('resetPasswordModal').style.display = 'none';
+            document.getElementById('resetNewPassword').value = '';
+        }
+
+        window.showResetPasswordModal = showResetPasswordModal;
+        window.closeResetPasswordModal = closeResetPasswordModal;
+        window.submitPasswordReset = async function() {
+            const email = document.getElementById('resetEmail').value;
+            const newPassword = document.getElementById('resetNewPassword').value;
+            if (!email || !newPassword) return showError('Please fill out both fields.');
+
+            const btn = document.getElementById('submitResetBtn');
+            btn.innerHTML = 'Resetting...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/reset-password-demo`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, newPassword })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showSuccess('Password has been successfully updated! You can now login.');
+                    closeResetPasswordModal();
+                } else {
+                    showError(data.error || 'Failed to reset password');
+                }
+            } catch (err) {
+                showError('Network error. Please try again.');
+            } finally {
+                btn.innerHTML = 'Reset Password';
+                btn.disabled = false;
+            }
+        };
 
         // --- Phone / OTP Login ---
         const sendOtpBtn = document.getElementById('sendOtpBtn');

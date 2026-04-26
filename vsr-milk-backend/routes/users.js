@@ -84,6 +84,25 @@ router.post("/login", (req, res) => {
     });
 });
 
+// DEMO PASSWORD RESET
+router.post("/reset-password-demo", (req, res) => {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+        return res.status(400).json({ error: "Email and new password are required." });
+    }
+
+    db.query("UPDATE users SET password = ? WHERE email = ?", [newPassword, email], (err, result) => {
+        if (err) {
+            console.error("Reset password error:", err.message);
+            return res.status(500).json({ error: "Failed to reset password." });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Email not found in our records." });
+        }
+        res.json({ message: "Password has been successfully updated!" });
+    });
+});
+
 // --- THE FOLLOWING ROUTES ARE PROTECTED ---
 
 // SYNC FIREBASE USER WITH MYSQL
