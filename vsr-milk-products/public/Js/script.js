@@ -584,7 +584,7 @@ function initProfileFlip() {
 
     const isOwner = localStorage.getItem('vsr_owner_active') === 'true';
     const userData = JSON.parse(localStorage.getItem('vsr_user') || 'null');
-    const isLoggedIn = isOwner || (userData && userData.email);
+    const isLoggedIn = isOwner || (userData !== null);
 
     // Clean up classes
     container.classList.remove('logged-in');
