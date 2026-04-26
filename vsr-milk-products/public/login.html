@@ -426,18 +426,7 @@
             }
         });
 
-        document.getElementById('forgotPassword').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            if (!email) return showError('Please enter your email address first.');
-            
-            const res = await resetPassword(email);
-            if (res.success) {
-                showSuccess('Password reset email sent! Check your inbox.');
-            } else {
-                showError(res.error);
-            }
-        });
+        // Removed forgot password listener since it's unsupported in custom backend
 
         // --- Phone / OTP Login ---
         const sendOtpBtn = document.getElementById('sendOtpBtn');
