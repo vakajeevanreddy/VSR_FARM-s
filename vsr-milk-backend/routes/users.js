@@ -242,6 +242,21 @@ router.put("/:id/addresses/:addressId", authMiddleware(), (req, res) => {
     }
 });
 
+// SET AS DEFAULT
+router.put("/:id/addresses/:addressId/default", authMiddleware(), (req, res) => {
+    const { addressId, id: userId } = req.params;
+    if (!checkOwnership(req, res, userId)) return;
+
+    db.query("UPDATE addresses SET is_default = 0 WHERE user_id = ?", [userId], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        db.query("UPDATE addresses SET is_default = 1 WHERE id = ? AND user_id = ?", [addressId, userId], (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Default address updated successfully" });
+        });
+    });
+});
+
 // DELETE ADDRESS
 router.delete("/:id/addresses/:addressId", (req, res) => {
     const { id, addressId } = req.params;
