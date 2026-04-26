@@ -356,6 +356,8 @@
             <h3 style="margin-bottom: 15px; color: var(--primary);">Reset Password</h3>
             <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">Enter your registered email address and a new password below.</p>
             
+            <p id="resetModalMsg" style="text-align: center; font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; display: none;"></p>
+
             <input type="email" id="resetEmail" class="otp-input" placeholder="Enter your email" style="margin-bottom: 15px; font-size: 1rem;">
             <input type="password" id="resetNewPassword" class="otp-input" placeholder="Enter new password" style="margin-bottom: 20px; font-size: 1rem;">
             
@@ -440,15 +442,24 @@
         });
 
         // --- Demo Password Reset ---
+        function showResetModalError(msg, isSuccess = false) {
+            const msgEl = document.getElementById('resetModalMsg');
+            msgEl.innerText = msg;
+            msgEl.style.color = isSuccess ? '#27ae60' : '#e74c3c';
+            msgEl.style.display = 'block';
+        }
+
         function showResetPasswordModal() {
             const emailInput = document.getElementById('email').value;
             if (emailInput) document.getElementById('resetEmail').value = emailInput;
+            document.getElementById('resetModalMsg').style.display = 'none';
             document.getElementById('resetPasswordModal').style.display = 'flex';
         }
 
         function closeResetPasswordModal() {
             document.getElementById('resetPasswordModal').style.display = 'none';
             document.getElementById('resetNewPassword').value = '';
+            document.getElementById('resetModalMsg').style.display = 'none';
         }
 
         window.showResetPasswordModal = showResetPasswordModal;
@@ -456,11 +467,12 @@
         window.submitPasswordReset = async function() {
             const email = document.getElementById('resetEmail').value;
             const newPassword = document.getElementById('resetNewPassword').value;
-            if (!email || !newPassword) return showError('Please fill out both fields.');
+            if (!email || !newPassword) return showResetModalError('Please fill out both fields.');
 
             const btn = document.getElementById('submitResetBtn');
             btn.innerHTML = 'Resetting...';
             btn.disabled = true;
+            document.getElementById('resetModalMsg').style.display = 'none';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/users/reset-password-demo`, {
@@ -474,10 +486,10 @@
                     showSuccess('Password has been successfully updated! You can now login.');
                     closeResetPasswordModal();
                 } else {
-                    showError(data.error || 'Failed to reset password');
+                    showResetModalError(data.error || 'Failed to reset password');
                 }
             } catch (err) {
-                showError('Network error. Please try again.');
+                showResetModalError('Network error. Please try again.');
             } finally {
                 btn.innerHTML = 'Reset Password';
                 btn.disabled = false;
