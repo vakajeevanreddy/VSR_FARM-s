@@ -71,28 +71,27 @@ export const login = async (email, password) => {
  */
 export const signup = async (email, password, displayName) => {
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        // Update display name
-        if (displayName) {
-            await updateProfile(user, { displayName });
-        }
-        
-        const syncResult = await syncUser({ ...user, displayName });
+        const response = await fetch(`${BASE_URL}/users/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                name: displayName || 'Customer', 
+                email, 
+                password 
+            })
+        });
 
-        // Save user to localStorage for avatar
-        localStorage.setItem('vsr_user', JSON.stringify({
-            id: syncResult.id,
-            email: user.email,
-            displayName: displayName || 'Customer',
-            uid: user.uid,
-            joinedAt: new Date().toISOString(),
-            loginMethod: 'email'
-        }));
-        return { success: true, user: { ...user, id: syncResult.id } };
+        const data = await response.json();
+
+        if (response.ok) {
+            // Also login immediately to get the token
+            return await login(email, password);
+        } else {
+            return { success: false, error: data.error || 'Registration failed' };
+        }
     } catch (error) {
-        console.error("Signup Error:", error.code, error.message);
-        return { success: false, error: _friendlyError(error.code) };
+        console.error("Signup Error:", error);
+        return { success: false, error: "Connection to server failed. Please try again." };
     }
 };
 
