@@ -1,20 +1,5 @@
 const API_BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') && window.location.port !== '5000' ? 'http://localhost:5000' : window.location.origin;
 
-// Global Fetch Interceptor to bypass LocalTunnel/Ngrok warning pages
-const originalFetch = window.fetch;
-window.fetch = async function() {
-    let [resource, config] = arguments;
-    if(typeof resource === 'string' && resource.includes(API_BASE_URL)) {
-        config = config || {};
-        config.headers = {
-            ...config.headers,
-            'Bypass-Tunnel-Reminder': 'true',
-            'ngrok-skip-browser-warning': 'true'
-        };
-    }
-    return originalFetch(resource, config);
-};
-
 // --- Cart System (LocalStorage based + Backend Sync) ---
 let cart = JSON.parse(localStorage.getItem('vsr_cart')) || [];
 
@@ -601,65 +586,46 @@ function initProfileFlip() {
     const userData = JSON.parse(localStorage.getItem('vsr_user') || 'null');
     const isLoggedIn = isOwner || (userData && userData.email);
 
-    if (isLoggedIn) {
-        // === LOGGED IN STATE ===
-        // Show the active user on BOTH sides so the flip (if it happens) is consistent
-        container.classList.remove('flipped');
-        container.classList.add('logged-in');
+    // Clean up classes
+    container.classList.remove('logged-in');
 
-        const profileHTML = isOwner ? `
-            <i class="fas fa-user-shield" style="font-size:1.3rem;"></i>
-            <span class="avatar-label">ADMIN</span>
-        ` : `
-            <i class="fas fa-user-check" style="font-size:1.3rem;"></i>
-            <span class="avatar-label">${userData.displayName ? userData.displayName.charAt(0).toUpperCase() : (userData.email ? userData.email.charAt(0).toUpperCase() : 'C')}</span>
+    if (isLoggedIn) {
+        container.classList.add('logged-in');
+        
+        const name = isOwner ? 'ADMIN' : (userData.displayName || userData.email || 'U').charAt(0).toUpperCase();
+        const icon = isOwner ? 'fa-user-shield' : 'fa-user-check';
+        const color = isOwner ? '#d4af37' : '#27ae60';
+
+        const html = `
+            <div style="background:${color}; color:white; width:42px; height:42px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.2); border: 2px solid white;">
+                <i class="fas ${icon}" style="font-size:1rem;"></i>
+                <span style="font-size:0.6rem; font-weight:bold; line-height:1;">${isOwner ? 'ADMIN' : name}</span>
+            </div>
         `;
 
-        const profileTitle = isOwner ? "Go to Admin Panel" : "My Profile";
-        const targetUrl = isOwner ? 'owner_dashboard.html' : 'customer.html';
-
-        // Front side
-        front.innerHTML = profileHTML;
-        front.title = profileTitle;
-        front.onclick = (e) => { e.stopPropagation(); window.location.href = targetUrl; };
-
-        // Back side (identical to front, no more logout here)
-        back.className = 'profile-back';
-        back.innerHTML = profileHTML;
-        back.title = profileTitle;
-        back.onclick = (e) => { e.stopPropagation(); window.location.href = targetUrl; };
-
+        front.innerHTML = html;
+        back.innerHTML = html; // Same on both sides when logged in
+        front.onclick = () => window.location.href = isOwner ? 'owner_dashboard.html' : 'customer.html';
+        
         if (logoutBtn) logoutBtn.style.display = 'inline-flex';
 
     } else {
-        // === NOT LOGGED IN STATE ===
-        container.classList.remove('flipped');
-        container.classList.remove('logged-in');
-
-        // Front (visible): Owner login — gold crown icon
+        // NOT LOGGED IN - Show Flip between Owner and Customer Login
         front.innerHTML = `
-            <i class="fas fa-user-tie" style="color: #d4af37; font-size:1.3rem;"></i>
-            <span class="avatar-label">OWNER</span>
+            <div style="background:#fff; color:#d4af37; width:40px; height:40px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; border:2px solid #d4af37;">
+                <i class="fas fa-user-tie"></i>
+                <span style="font-size:0.5rem; font-weight:bold;">OWNER</span>
+            </div>
         `;
-        front.title = "Click for Owner Login";
-        front.style.cursor = 'pointer';
-        front.onclick = (e) => {
-            e.stopPropagation();
-            window.location.href = 'owner_login.html';
-        };
+        front.onclick = () => window.location.href = 'owner_login.html';
 
-        // Back (visible on hover): Customer login — green user icon
-        back.className = 'profile-back';
         back.innerHTML = `
-            <i class="fas fa-user" style="font-size:1.3rem;"></i>
-            <span class="avatar-label">LOGIN</span>
+            <div style="background:#27ae60; color:#fff; width:40px; height:40px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; border: 2px solid white;">
+                <i class="fas fa-user"></i>
+                <span style="font-size:0.5rem; font-weight:bold;">LOGIN</span>
+            </div>
         `;
-        back.title = "Click for Customer Login";
-        back.style.cursor = 'pointer';
-        back.onclick = (e) => {
-            e.stopPropagation();
-            window.location.href = 'login.html';
-        };
+        back.onclick = () => window.location.href = 'login.html';
 
         if (logoutBtn) logoutBtn.style.display = 'none';
     }

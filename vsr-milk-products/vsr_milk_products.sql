@@ -239,5 +239,9 @@ FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 
+
+INSERT INTO users (name, email, password, role) 
+VALUES ('VSR Owner', 'vsrmilkproducts@gmail.com', 'Welcome@123', 'owner');
+
 DESCRIBE cart;
 SELECT * FROM cart;

@@ -107,33 +107,25 @@ let _confirmationResult = null;
  */
 export const sendOTP = async (phoneNumber, containerId = 'recaptcha-container') => {
     try {
-        // Only initialize RecaptchaVerifier if it doesn't exist yet to prevent re-rendering crashes
-        if (!window._recaptchaVerifier) {
-            window._recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-                size: 'invisible',
-                callback: () => {
-                    // reCAPTCHA solved
-                },
-                'expired-callback': () => {
-                    console.warn('reCAPTCHA expired');
-                }
-            });
-        }
-
-        // Send OTP
-        _confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window._recaptchaVerifier);
-        
-        return { success: true, message: 'OTP sent successfully' };
-    } catch (error) {
-        console.error("Send OTP Error:", error.code, error.message);
-        
-        // Clean up reCAPTCHA on error so it can be retried cleanly
+        // Clear old verifier
         if (window._recaptchaVerifier) {
             window._recaptchaVerifier.clear();
             window._recaptchaVerifier = null;
         }
-        
-        return { success: false, error: _friendlyError(error.code) || error.message };
+
+        // Initialize RecaptchaVerifier as VISIBLE to ensure it works on all domains
+        window._recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+            'size': 'normal', // Changed to normal/visible for reliability
+            'callback': (response) => {
+                console.log("reCAPTCHA solved");
+            }
+        });
+
+        _confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window._recaptchaVerifier);
+        return { success: true, message: 'OTP sent successfully' };
+    } catch (error) {
+        console.error("Send OTP Detail:", error);
+        return { success: false, error: _friendlyError(error.code) || error.message || "Failed to send OTP" };
     }
 };
 
@@ -144,16 +136,16 @@ export const sendOTP = async (phoneNumber, containerId = 'recaptcha-container') 
 export const verifyOTP = async (otpCode) => {
     try {
         if (!_confirmationResult) {
-            return { success: false, error: 'No OTP was sent. Please request a new OTP.' };
+            console.error("No confirmation result found in session.");
+            return { success: false, error: 'Session expired or not initialized. Please click "Send OTP" again.' };
         }
 
         const result = await _confirmationResult.confirm(otpCode);
         const user = result.user;
         const syncResult = await syncUser(user);
 
-        // Save user to localStorage for avatar
         localStorage.setItem('vsr_user', JSON.stringify({
-            id: syncResult.id,
+            id: syncResult ? syncResult.id : user.uid,
             email: user.email || '',
             displayName: user.displayName || user.phoneNumber || 'Customer',
             uid: user.uid,
@@ -161,10 +153,10 @@ export const verifyOTP = async (otpCode) => {
             loginMethod: 'phone'
         }));
 
-        return { success: true, user: { ...user, id: syncResult.id } };
+        return { success: true, user: { ...user, id: syncResult ? syncResult.id : user.uid } };
     } catch (error) {
-        console.error("Verify OTP Error:", error.code, error.message);
-        return { success: false, error: _friendlyError(error.code) };
+        console.error("Verify OTP Detail:", error);
+        return { success: false, error: _friendlyError(error.code) || error.message || "Invalid OTP" };
     }
 };
 
@@ -221,11 +213,12 @@ export const logout = async () => {
  * Password Reset
  */
 export const resetPassword = async (email) => {
+    if (!email) return { success: false, error: "Please enter your email address first." };
     try {
         await sendPasswordResetEmail(auth, email);
         return { success: true };
     } catch (error) {
-        console.error("Reset Error:", error.message);
+        console.error("Reset Error:", error.code, error.message);
         return { success: false, error: _friendlyError(error.code) };
     }
 };
