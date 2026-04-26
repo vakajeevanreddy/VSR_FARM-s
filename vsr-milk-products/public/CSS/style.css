@@ -1986,17 +1986,38 @@ footer p {
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
-        order: 3;
+        order: 4;
+    }
+
+    .nav-right {
+        gap: 8px;
+    }
+
+    .header-logout-btn {
+        padding: 6px 10px;
+        font-size: 0; /* Hide text */
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        order: 1;
+    }
+
+    .header-logout-btn i {
+        font-size: 0.9rem;
+        margin: 0;
     }
 
     .cart-icon {
         order: 2;
-        margin-right: 20px;
+        margin-right: 5px;
     }
 
     .profile-flip-container {
-        order: 2;
-        margin-right: 15px;
+        order: 3;
+        margin-right: 5px;
         margin-left: 0 !important;
     }
 }

@@ -1,4 +1,4 @@
-const API_BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') && window.location.port !== '5000' ? 'http://localhost:5000' : window.location.origin;
+var API_BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') && window.location.port !== '5000' ? 'http://localhost:5000' : window.location.origin;
 
 // --- Cart System (LocalStorage based + Backend Sync) ---
 let cart = JSON.parse(localStorage.getItem('vsr_cart')) || [];
