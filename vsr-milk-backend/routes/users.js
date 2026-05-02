@@ -242,24 +242,28 @@ router.put("/:id/addresses/:addressId", authMiddleware(), (req, res) => {
     }
 });
 
-// SET AS DEFAULT
-router.put("/:id/addresses/:addressId/default", authMiddleware(), (req, res) => {
-    const { addressId, id: userId } = req.params;
+// SET DEFAULT ADDRESS (dedicated simple route)
+router.patch("/:id/addresses/:addressId/default", authMiddleware(), (req, res) => {
+    const userId = req.params.id;
+    const addressId = req.params.addressId;
     if (!checkOwnership(req, res, userId)) return;
 
+    // First, clear all defaults for this user
     db.query("UPDATE addresses SET is_default = 0 WHERE user_id = ?", [userId], (err) => {
         if (err) return res.status(500).json({ error: err.message });
-        
-        db.query("UPDATE addresses SET is_default = 1 WHERE id = ? AND user_id = ?", [addressId, userId], (err) => {
-            if (err) return res.status(500).json({ error: err.message });
+        // Then set the chosen one as default
+        db.query("UPDATE addresses SET is_default = 1 WHERE id = ? AND user_id = ?", [addressId, userId], (err2, result) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            if (result.affectedRows === 0) return res.status(404).json({ error: "Address not found." });
             res.json({ message: "Default address updated successfully" });
         });
     });
 });
 
 // DELETE ADDRESS
-router.delete("/:id/addresses/:addressId", (req, res) => {
+router.delete("/:id/addresses/:addressId", authMiddleware(), (req, res) => {
     const { id, addressId } = req.params;
+    if (!checkOwnership(req, res, id)) return;
     db.query("DELETE FROM addresses WHERE id = ? AND user_id = ?", [addressId, id], (err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Address deleted successfully" });

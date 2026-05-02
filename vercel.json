@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "vsr-milk-products/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/CSS/(.*)",
+      "dest": "/vsr-milk-products/public/CSS/$1"
+    },
+    {
+      "src": "/Js/(.*)",
+      "dest": "/vsr-milk-products/public/Js/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/vsr-milk-products/public/images/$1"
+    },
+    {
+      "src": "/config/(.*)",
+      "dest": "/vsr-milk-products/public/config/$1"
+    },
+    {
+      "src": "/(.*\\.html)",
+      "dest": "/vsr-milk-products/public/$1"
+    },
+    {
+      "src": "/(.*\\.css)",
+      "dest": "/vsr-milk-products/public/$1"
+    },
+    {
+      "src": "/(.*\\.js)",
+      "dest": "/vsr-milk-products/public/$1"
+    },
+    {
+      "src": "/(.*\\.png)",
+      "dest": "/vsr-milk-products/public/$1"
+    },
+    {
+      "src": "/(.*\\.jpg)",
+      "dest": "/vsr-milk-products/public/$1"
+    },
+    {
+      "src": "/(.*\\.ico)",
+      "dest": "/vsr-milk-products/public/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/vsr-milk-products/public/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/vsr-milk-products/public/$1"
+    }
+  ]
+}

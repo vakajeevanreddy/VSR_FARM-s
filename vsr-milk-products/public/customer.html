@@ -1238,9 +1238,9 @@
             let generatedOTP = null;
 
             // Dynamic API URL matching other files
-            var API_BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') && window.location.port !== '5000' 
+            var API_BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') 
                 ? 'http://localhost:5000' 
-                : window.location.origin;
+                : 'https://vsr-milk-backend.onrender.com';
 
             // Regex: 8+ chars, 1 upper, 1 lower, 1 number, 1 special
             const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -1654,24 +1654,25 @@
             async function setDefaultAddress(id) {
                 const user = JSON.parse(localStorage.getItem('vsr_user'));
                 const userId = user.id || user.uid;
-                const addr = user.addresses.find(a => a.id === id);
-                if (!addr) return;
 
                 try {
-                    const res = await fetch(`${API_BASE_URL}/users/${userId}/addresses/${id}`, {
-                        method: 'PUT',
+                    const res = await fetch(`${API_BASE_URL}/users/${userId}/addresses/${id}/default`, {
+                        method: 'PATCH',
                         headers: { 
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${localStorage.getItem('vsr_token')}`
-                        },
-                        body: JSON.stringify({ ...addr, is_default: true })
+                        }
                     });
                     if (res.ok) {
                         loadAddresses();
                         showToast('Default address set!', 'success');
+                    } else {
+                        const data = await res.json();
+                        alert(data.error || 'Failed to set default address');
                     }
                 } catch (err) {
                     console.error("Set default error:", err);
+                    alert('Network error. Please try again.');
                 }
             }
 

@@ -28,7 +28,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Use the global API_BASE_URL if it exists, otherwise fallback to dynamic
-const BASE_URL = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : ((window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') && window.location.port !== '5000' ? 'http://localhost:5000' : window.location.origin);
+const BASE_URL = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : ((window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://localhost:5000' : 'https://vsr-milk-backend.onrender.com');
 
 // --- Email/Password Auth ---
 
