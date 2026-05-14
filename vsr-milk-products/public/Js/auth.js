@@ -276,36 +276,6 @@ function _friendlyError(code) {
     return errors[code] || `Authentication error: ${code}`;
 }
 
-/**
- * Send password reset email
- */
-export const resetPassword = async (email) => {
-    try {
-        await sendPasswordResetEmail(auth, email);
-        return { success: true };
-    } catch (error) {
-        console.error("Reset Password Error:", error);
-        return { success: false, error: _friendlyError(error.code) };
-    }
-};
-
-/**
- * Handle Logout
- */
-export const logout = async () => {
-    try {
-        await signOut(auth);
-        localStorage.removeItem('vsr_token');
-        localStorage.removeItem('vsr_user');
-        localStorage.removeItem('user_role');
-        localStorage.removeItem('vsr_owner_active');
-        return { success: true };
-    } catch (error) {
-        console.error("Logout Error:", error);
-        return { success: false, error: error.message };
-    }
-};
-
 export { auth };
 
 
