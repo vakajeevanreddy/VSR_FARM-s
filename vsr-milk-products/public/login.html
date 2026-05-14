@@ -305,7 +305,7 @@
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                         <input type="checkbox" id="rememberMe" style="width: auto;"> Remember Me
                     </label>
-                    <a href="#" onclick="showResetPasswordModal()">Forgot Password?</a>
+                    <a href="javascript:void(0)" onclick="showResetPasswordModal()">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="login-btn" id="loginBtn">Login</button>
@@ -350,19 +350,29 @@
             <p class="signup-text">Don't have an account? <a href="signup.html">Create Account</a></p>
         </div>
     </div>
-    <!-- MOCK PASSWORD RESET MODAL -->
-    <div id="resetPasswordModal" class="otp-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-        <div class="otp-content" style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-            <h3 style="margin-bottom: 15px; color: var(--primary);">Reset Password</h3>
-            <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">Enter your registered email address and a new password below.</p>
+    <!-- PREMIUM PASSWORD RESET MODAL -->
+    <div id="resetPasswordModal" class="otp-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div class="otp-content" style="background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); text-align: left;">
+            <div style="width: 60px; height: 60px; background: #e8f5e9; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: #27ae60; font-size: 1.5rem;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 style="margin-bottom: 8px; color: #2c3e50; font-size: 1.5rem; font-weight: 700;">Reset Password</h3>
+            <p style="font-size: 0.95rem; color: #7f8c8d; margin-bottom: 28px; line-height: 1.5;">Enter your registered email address below. We'll send you a secure link to reset your password.</p>
             
-            <p id="resetModalMsg" style="text-align: center; font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; display: none;"></p>
+            <div id="resetModalMsg" style="padding: 12px 16px; border-radius: 12px; font-weight: 500; font-size: 0.9rem; margin-bottom: 20px; display: none;"></div>
 
-            <input type="email" id="resetEmail" class="otp-input" placeholder="Enter your email" style="margin-bottom: 15px; font-size: 1rem;">
-            <input type="password" id="resetNewPassword" class="otp-input" placeholder="Enter new password" style="margin-bottom: 20px; font-size: 1rem;">
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="resetEmail" placeholder="Enter your email" style="width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
             
-            <button class="save-btn" onclick="submitPasswordReset()" id="submitResetBtn" style="width: 100%; margin-bottom: 10px;">Reset Password</button>
-            <button class="edit-btn" onclick="closeResetPasswordModal()" style="width: 100%; color: #e74c3c;">Cancel</button>
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+                <button class="login-btn" onclick="submitPasswordReset()" id="submitResetBtn" style="flex: 2;">Send Reset Link</button>
+                <button class="tab-btn" onclick="closeResetPasswordModal()" style="flex: 1; border: 1px solid #eee; background: #f8f9fa;">Cancel</button>
+            </div>
         </div>
     </div>
     
@@ -465,33 +475,31 @@
         window.showResetPasswordModal = showResetPasswordModal;
         window.closeResetPasswordModal = closeResetPasswordModal;
         window.submitPasswordReset = async function() {
-            const email = document.getElementById('resetEmail').value;
-            const newPassword = document.getElementById('resetNewPassword').value;
-            if (!email || !newPassword) return showResetModalError('Please fill out both fields.');
+            const email = document.getElementById('resetEmail').value.trim();
+            if (!email) return showResetModalError('Please enter your email address.');
 
             const btn = document.getElementById('submitResetBtn');
-            btn.innerHTML = 'Resetting...';
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
             document.getElementById('resetModalMsg').style.display = 'none';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/users/reset-password-demo`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, newPassword })
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    showSuccess('Password has been successfully updated! You can now login.');
-                    closeResetPasswordModal();
+                // Use proper Firebase password reset instead of the demo one
+                const result = await resetPassword(email);
+                
+                if (result.success) {
+                    showResetModalError('A password reset link has been sent to your email. Please check your inbox.', true);
+                    setTimeout(() => {
+                        closeResetPasswordModal();
+                    }, 5000);
                 } else {
-                    showResetModalError(data.error || 'Failed to reset password');
+                    showResetModalError(result.error || 'Failed to send reset link');
                 }
             } catch (err) {
                 showResetModalError('Network error. Please try again.');
             } finally {
-                btn.innerHTML = 'Reset Password';
+                btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         };

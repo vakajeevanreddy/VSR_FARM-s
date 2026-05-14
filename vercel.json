@@ -2,8 +2,42 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "vsr-milk-products/public/**",
       "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/products/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/users/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/orders/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/cart/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/wishlist/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/reviews/(.*)",
+      "destination": "/api/index.js"
     }
   ],
   "routes": [
@@ -53,7 +87,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/vsr-milk-products/public/$1"
+      "dest": "/vsr-milk-products/public/$1",
+      "check": true
     }
   ]
 }

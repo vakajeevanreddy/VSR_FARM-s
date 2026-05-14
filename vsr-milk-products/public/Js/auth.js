@@ -33,65 +33,72 @@ const BASE_URL = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : ((window.l
 // --- Email/Password Auth ---
 
 /**
- * Login with Email and Password (Backend JWT)
+ * Login with Email and Password (Firebase + Sync)
  */
 export const login = async (email, password) => {
     try {
-        const response = await fetch(`${BASE_URL}/users/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+        // 1. Authenticate with Firebase
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const firebaseUser = userCredential.user;
+        
+        // 2. Get Firebase Token
+        const token = await firebaseUser.getIdToken();
+        
+        // 3. Sync with MySQL Backend
+        const syncResult = await syncUser(firebaseUser);
+        const mysqlUser = syncResult.user;
+        const backendToken = syncResult.token;
 
-        const data = await response.json();
-
-        if (response.ok) {
-            // Save user and token to localStorage
-            localStorage.setItem('vsr_token', data.token);
-            localStorage.setItem('vsr_user', JSON.stringify(data.user));
-            localStorage.setItem('user_role', data.user.role);
-            
-            // For backward compatibility and cross-tab sync in script.js
-            if (data.user.role === 'owner') {
-                localStorage.setItem('vsr_owner_active', 'true');
-            }
-
-            return { success: true, user: data.user, token: data.token };
-        } else {
-            return { success: false, error: data.error || 'Invalid credentials' };
+        // 4. Save to localStorage
+        localStorage.setItem('vsr_token', backendToken);
+        localStorage.setItem('vsr_user', JSON.stringify({
+            ...mysqlUser,
+            uid: firebaseUser.uid
+        }));
+        localStorage.setItem('user_role', mysqlUser.role || 'customer');
+        
+        if (mysqlUser.role === 'owner') {
+            localStorage.setItem('vsr_owner_active', 'true');
         }
+
+        return { success: true, user: mysqlUser, token: backendToken };
     } catch (error) {
-        console.error("Backend Login Error:", error);
-        return { success: false, error: "Connection to server failed. Please try again." };
+        console.error("Firebase Login Error:", error);
+        return { success: false, error: _friendlyError(error.code) };
     }
 };
 
 /**
- * Signup with Email and Password
+ * Signup with Email and Password (Firebase + Sync)
  */
 export const signup = async (email, password, displayName) => {
     try {
-        const response = await fetch(`${BASE_URL}/users/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                name: displayName || 'Customer', 
-                email, 
-                password 
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            // Also login immediately to get the token
-            return await login(email, password);
-        } else {
-            return { success: false, error: data.error || 'Registration failed' };
+        // 1. Create user in Firebase
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const firebaseUser = userCredential.user;
+        
+        // 2. Update Profile Display Name
+        if (displayName) {
+            await updateProfile(firebaseUser, { displayName: displayName });
         }
+        
+        // 3. Sync with MySQL Backend
+        const syncResult = await syncUser(firebaseUser);
+        const mysqlUser = syncResult.user;
+        const backendToken = syncResult.token;
+
+        // 4. Save to localStorage
+        localStorage.setItem('vsr_token', backendToken);
+        localStorage.setItem('vsr_user', JSON.stringify({
+            ...mysqlUser,
+            uid: firebaseUser.uid
+        }));
+        localStorage.setItem('user_role', mysqlUser.role || 'customer');
+
+        return { success: true, user: mysqlUser };
     } catch (error) {
-        console.error("Signup Error:", error);
-        return { success: false, error: "Connection to server failed. Please try again." };
+        console.error("Firebase Signup Error:", error);
+        return { success: false, error: _friendlyError(error.code) };
     }
 };
 
@@ -106,25 +113,36 @@ let _confirmationResult = null;
  */
 export const sendOTP = async (phoneNumber, containerId = 'recaptcha-container') => {
     try {
+        console.log("Attempting to send OTP to:", phoneNumber);
+        
         // Clear old verifier
         if (window._recaptchaVerifier) {
             window._recaptchaVerifier.clear();
             window._recaptchaVerifier = null;
         }
 
-        // Initialize RecaptchaVerifier as VISIBLE to ensure it works on all domains
+        // Initialize RecaptchaVerifier
+        // Note: size 'invisible' is often better for UX but 'normal' is more reliable for debugging
         window._recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-            'size': 'normal', // Changed to normal/visible for reliability
+            'size': 'invisible', 
             'callback': (response) => {
-                console.log("reCAPTCHA solved");
+                console.log("reCAPTCHA solved successfully");
+            },
+            'expired-callback': () => {
+                console.warn("reCAPTCHA expired, please try again");
             }
         });
 
         _confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window._recaptchaVerifier);
-        return { success: true, message: 'OTP sent successfully' };
+        console.log("OTP sent successfully to", phoneNumber);
+        return { success: true, message: 'OTP sent successfully! Please check your mobile.' };
     } catch (error) {
-        console.error("Send OTP Detail:", error);
-        return { success: false, error: _friendlyError(error.code) || error.message || "Failed to send OTP" };
+        console.error("Send OTP Error Details:", error);
+        let errorMsg = _friendlyError(error.code);
+        if (error.code === 'auth/unauthorized-domain') {
+            errorMsg = "This domain is not authorized in Firebase. If you are testing locally, ensure 'localhost' is added to Authorized Domains in Firebase Console -> Auth -> Settings.";
+        }
+        return { success: false, error: errorMsg };
     }
 };
 
@@ -142,17 +160,21 @@ export const verifyOTP = async (otpCode) => {
         const result = await _confirmationResult.confirm(otpCode);
         const user = result.user;
         const syncResult = await syncUser(user);
+        const mysqlUser = syncResult.user;
+        const backendToken = syncResult.token;
 
+        localStorage.setItem('vsr_token', backendToken);
         localStorage.setItem('vsr_user', JSON.stringify({
-            id: syncResult ? syncResult.id : user.uid,
+            id: mysqlUser ? mysqlUser.id : user.uid,
             email: user.email || '',
             displayName: user.displayName || user.phoneNumber || 'Customer',
             uid: user.uid,
             phone: user.phoneNumber,
-            loginMethod: 'phone'
+            loginMethod: 'phone',
+            role: mysqlUser ? mysqlUser.role : 'customer'
         }));
 
-        return { success: true, user: { ...user, id: syncResult ? syncResult.id : user.uid } };
+        return { success: true, user: { ...user, id: mysqlUser ? mysqlUser.id : user.uid } };
     } catch (error) {
         console.error("Verify OTP Detail:", error);
         return { success: false, error: _friendlyError(error.code) || error.message || "Invalid OTP" };
@@ -163,13 +185,11 @@ export const verifyOTP = async (otpCode) => {
  * Sync Firebase user with custom backend (Authenticated)
  */
 async function syncUser(firebaseUser) {
-    const token = localStorage.getItem('vsr_token');
     try {
         const response = await fetch(`${BASE_URL}/users/sync`, {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 name: firebaseUser.displayName,
@@ -178,10 +198,10 @@ async function syncUser(firebaseUser) {
             })
         });
         const data = await response.json();
-        return data.user;
+        return data; // Returns { user, token }
     } catch (err) {
         console.error("Sync error:", err);
-        return { id: firebaseUser.uid }; // Fallback to UID if sync fails
+        return { user: { id: firebaseUser.uid }, token: null }; 
     }
 }
 
@@ -255,6 +275,36 @@ function _friendlyError(code) {
     };
     return errors[code] || `Authentication error: ${code}`;
 }
+
+/**
+ * Send password reset email
+ */
+export const resetPassword = async (email) => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+        return { success: true };
+    } catch (error) {
+        console.error("Reset Password Error:", error);
+        return { success: false, error: _friendlyError(error.code) };
+    }
+};
+
+/**
+ * Handle Logout
+ */
+export const logout = async () => {
+    try {
+        await signOut(auth);
+        localStorage.removeItem('vsr_token');
+        localStorage.removeItem('vsr_user');
+        localStorage.removeItem('user_role');
+        localStorage.removeItem('vsr_owner_active');
+        return { success: true };
+    } catch (error) {
+        console.error("Logout Error:", error);
+        return { success: false, error: error.message };
+    }
+};
 
 export { auth };
 
