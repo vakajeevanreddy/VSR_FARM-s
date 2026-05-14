@@ -122,14 +122,12 @@ export const sendOTP = async (phoneNumber, containerId = 'recaptcha-container') 
         }
 
         // Initialize RecaptchaVerifier
-        // Note: size 'invisible' is often better for UX but 'normal' is more reliable for debugging
+        // Switching to 'normal' (visible) temporarily to build domain reputation.
+        // This makes Firebase much more likely to send SMS to real numbers.
         window._recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-            'size': 'invisible', 
+            'size': 'normal', 
             'callback': (response) => {
                 console.log("reCAPTCHA solved successfully");
-            },
-            'expired-callback': () => {
-                console.warn("reCAPTCHA expired, please try again");
             }
         });
 
